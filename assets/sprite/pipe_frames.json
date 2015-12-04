@@ -1,0 +1,17 @@
+
+{"frames": {
+"pipeup":
+{
+	"filename": "pipeup",
+	"frame": {"x":105,"y":16,"w":45,"h":112}
+},
+"pipedown":
+{
+	"filename": "pipedown",
+	"frame": {"x":105,"y":208,"w":45,"h":112}
+}  
+},
+"meta": {
+
+}
+}

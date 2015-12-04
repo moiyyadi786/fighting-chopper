@@ -1,0 +1,11 @@
+{
+  "name": "fighter-chopper",
+  "version": "1.0.0",
+  "description": "HTML5 Game",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hozefa Moiyyadi",
+  "license": "ISC"
+}

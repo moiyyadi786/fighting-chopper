@@ -1,0 +1,25 @@
+
+{"frames": [
+
+{
+	"filename": "dragonrider00",
+	"frame": {"x":5,"y":270,"w":110,"h":75}
+},
+{
+	"filename": "dragonrider01",
+	"frame": {"x":115,"y":270,"w":110,"h":75}
+},
+{
+	"filename": "dragonrider02",
+	"frame": {"x":225,"y":270,"w":110,"h":75}
+},
+{
+	"filename": "dragonrider03",
+	"frame": {"x":335,"y":270,"w":110,"h":75}
+}
+],
+"meta": {
+"frames_fly":"1-4", 
+"frames_explode":"4"
+}
+}

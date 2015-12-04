@@ -1,0 +1,28 @@
+
+{"frames": [
+
+{
+	"filename": "honeyfly00",
+	"frame": {"x":15,"y":2,"w":155,"h":113}
+},
+{
+	"filename": "honeyfly01",
+	"frame": {"x":192,"y":24,"w":155,"h":90}
+},
+{
+	"filename": "honeyfly02",
+	"frame": {"x":370,"y":31,"w":155,"h":83}
+},
+{
+	"filename": "honeyfly03",
+	"frame": {"x":0,"y":0,"w":0,"h":0}
+},
+{
+	"filename": "honeyfly04",
+	"frame": {"x":0,"y":0,"w":0,"h":0}
+}
+],
+"meta": {
+"frames_fly":"1-3"
+}
+}

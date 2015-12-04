@@ -1,0 +1,17 @@
+
+{"frames": {
+"gemblue":
+{
+	"filename": "gemblue",
+	"frame": {"x":245,"y":67,"w":26,"h":20}
+},
+"gemgreen":
+{
+	"filename": "gemgreen",
+	"frame": {"x":245,"y":115,"w":26,"h":20}
+}  
+},
+"meta": {
+
+}
+}

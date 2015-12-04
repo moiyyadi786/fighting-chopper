@@ -1,0 +1,331 @@
+
+
+/* html, body { background: #333 url("http://codepen.io/images/classy_fabric.png"); }*/
+/*body{
+padding: 10px;
+}
+.slides {
+    padding: 0;
+    width: 609px;
+    height: 420px;
+    display: block;
+    margin: 0 auto;
+    position: relative;
+}
+
+.slides * {
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.slides input { display: none; }
+
+.slide-container { display: block; }
+
+.slide {
+    top: 0;
+    opacity: 0;
+    width: 609px;
+    height: 420px;
+    display: block;
+    position: absolute;
+
+    transform: scale(0);
+
+    transition: all .7s ease-in-out;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+}
+
+.nav label {
+    width: 200px;
+    height: 100%;
+    display: none;
+    position: absolute;
+
+	  opacity: 0;
+    z-index: 9;
+    cursor: pointer;
+
+    transition: opacity .2s;
+
+    color: #FFF;
+    font-size: 156pt;
+    text-align: center;
+    line-height: 380px;
+    font-family: "Varela Round", sans-serif;
+    background-color: rgba(255, 255, 255, .3);
+    text-shadow: 0px 0px 15px rgb(119, 119, 119);
+}
+
+.slide:hover + .nav label { opacity: 0.5; }
+
+.nav label:hover { opacity: 1; }
+
+.nav .next { right: 0; }
+
+input:checked + .slide-container  .slide {
+    opacity: 1;
+
+    transform: scale(1);
+
+    transition: opacity 1s ease-in-out;
+}
+
+input:checked + .slide-container .nav label { display: block; }
+
+.nav-dots {
+	width: 100%;
+	bottom: 9px;
+	height: 11px;
+	display: block;
+	position: absolute;
+	text-align: center;
+}
+
+.nav-dots .nav-dot {
+	top: -5px;
+	width: 11px;
+	height: 11px;
+	margin: 0 4px;
+	position: relative;
+	border-radius: 100%;
+	display: inline-block;
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
+.nav-dots .nav-dot:hover {
+	cursor: pointer;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+input#img-1:checked ~ .nav-dots label#img-dot-1,
+input#img-2:checked ~ .nav-dots label#img-dot-2,
+input#img-3:checked ~ .nav-dots label#img-dot-3,
+input#img-4:checked ~ .nav-dots label#img-dot-4,
+input#img-5:checked ~ .nav-dots label#img-dot-5,
+input#img-6:checked ~ .nav-dots label#img-dot-6 {
+	background: rgba(0, 0, 0, 0.8);
+}
+.select-mode{
+width: 100%;
+position: absolute;
+text-align: center;
+margin-top: 10px;
+//color: aliceblue;
+text-shadow: -3px -5px 5px;
+font:18px comic sans ms;
+border: none;
+z-index: 2;
+}
+.select-mode span{
+padding:10px 10px;
+border-radius: 5px;
+background-color: aliceblue;
+font-family: "Avant Garde", Avantgarde, "Century Gothic", CenturyGothic, "AppleGothic", sans-serif;
+font-size: 32px;
+text-transform: uppercase;
+text-rendering: optimizeLegibility;
+}
+.select-mode span.elegantshadow {
+color: antiquewhite;
+background-color: black;
+letter-spacing: .15em;
+text-shadow: 
+  1px -1px 0 #767676, 
+  -1px 2px 1px #737272, 
+  -2px 4px 1px #767474, 
+  -3px 6px 1px #787777, 
+  -4px 8px 1px #7b7a7a, 
+  -5px 10px 1px #7f7d7d, 
+  -6px 12px 1px #828181,
+}
+.__brackets-ld-highlight{
+border:none;
+}*/
+.hide-data{
+    display: none;
+}
+#box {
+   width: 25%;
+   padding-bottom: 25%;
+   background: #00F;
+   color: #FFF;
+   position: relative;
+}
+#innerContent {
+   position: absolute;
+   left: 10px;
+   right: 10px;
+   top: 10px;
+   bottom: 10px;
+   background: #66F;
+}
+body {
+   margin: 0;
+   padding: 0;
+   background: #EEE;
+   font: 10px/13px 'Lucida Sans',sans-serif;
+    background: black;
+}
+.wrap {
+   overflow: hidden;
+   margin: 10px;
+}
+.box {
+   float: left;
+   position: relative;
+   width: 20%;
+   padding-bottom: 20%;
+}
+.boxInner {
+   position: absolute;
+   left: 10px;
+   right: 10px;
+   top: 10px;
+   bottom: 10px;
+   overflow: hidden;
+}
+.boxInner img {
+   width: 100%;
+}
+.boxInner .titleBox {
+   position: absolute;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   margin-bottom: -50px;
+   background: #000;
+   background: rgba(0, 0, 0, 0.5);
+   color: #FFF;
+   padding: 10px;
+   text-align: center;
+   -webkit-transition: all 0.3s ease-out;
+   -moz-transition: all 0.3s ease-out;
+   -o-transition: all 0.3s ease-out;
+   transition: all 0.3s ease-out;
+}
+body.no-touch .boxInner:hover .titleBox, body.touch .boxInner.touchFocus .titleBox {
+   margin-bottom: 0;
+}
+@media only screen and (max-width : 480px) {
+   /* Smartphone view: 1 tile */
+   .box {
+      width: 100%;
+      height: 100%;   
+      padding-bottom: 30%;
+   }
+}
+@media only screen and (max-width : 650px) and (min-width : 481px) {
+   /* Tablet view: 2 tiles */
+   .box {
+      width: 50%;
+      padding-bottom: 50%;
+   }
+}
+@media only screen and (max-width : 1050px) and (min-width : 651px) {
+   /* Small desktop / ipad view: 3 tiles */
+   .box {
+      width: 33.3%;
+      padding-bottom: 33.3%;
+   }
+}
+@media only screen and (max-width : 1290px) and (min-width : 1051px) {
+   /* Medium desktop: 4 tiles */
+   .box {
+      width: 33.3%;
+      height: 50%;
+      padding-bottom: 10%;
+   }
+}
+.hand{
+cursor: pointer;
+}
+.select-game{
+text-align: center;
+padding:8px;
+-webkit-background: rgba(226,226,226,1);
+}
+.shine
+{
+    font-size: 2em;
+    margin: 0 auto;
+    padding: 10px;
+    align-content: center;
+    width: 50%;
+    color:darkred;
+    background: gray -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0     no-repeat;
+      -webkit-background: gray -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0     no-repeat;  
+    -webkit-background-size: 60px;
+    color: rgba(255, 255, 255, 0.1);
+    -webkit-background-clip: text;
+    animation: shine 5s ease infinite;
+
+}
+@font-face { 
+  font-family: Delicious; src: url('Delicious-Roman.otf'); 
+} 
+@font-face { 
+    font-family: Delicious; font-weight: bold; src: url('Delicious-Bold.otf'); 
+}
+#game-data{
+background-color:#FFF;
+
+/* Firefox 3.6+ */
+background-image: -moz-linear-gradient(#FFFFFF, #B7B209);
+
+/* Safari 5.1+, Chrome 10+ */
+background-image: -webkit-linear-gradient(#FFFFFF, #B7B209);
+
+/* Opera 11.10+ */
+background-image: -o-linear-gradient(#FFFFFF, #B7B209);
+
+/* Microsoft IE10 */
+background-image: -ms-linear-gradient(#FFFFFF, #B7B209);
+height: 40px;
+}
+.text-style{
+    font-family: 'Exo 2', sans-serif;
+    font-size: 26px;
+    font-weight: bold;
+    text-align: initial;
+    line-height: 100%;
+    color: #C36521;
+    text-shadow: #ccc 0 1px 0, #c9c9c9 0 2px 0, #bbb 0 3px 0, #b9b9b9 0 4px 0, #aaa 0 5px 0,rgba(0,0,0,.1) 0 6px 1px, rgba(0,0,0,.1) 0 0 5px, rgba(0,0,0,.3) 0 1px 3px, rgba(0,0,0,.15) 0 3px 5px, rgba(0,0,0,.2) 0 5px 10px, rgba(0,0,0,.2) 0 10px 10px, rgba(0,0,0,.1) 0 20px 20px;
+}
+.text-style > span{
+    padding: 10px 15px;
+}
+#gems{
+    padding-left: 55px;
+}
+#gems:before{
+    width: 25px;
+    height: 21px;
+    margin: 5px 0px 0px -35px;
+    position: absolute;
+    background: url('../assets/sprite/gems.png');
+    content: '';
+    background-position: -245px -67px;
+}
+.pl-20{
+    padding-left: 20px;   
+}
+@-webkit-keyframes shine
+{
+    0%
+    {
+        background-position: top left;
+    }
+    100%
+    {
+        background-position: top right;
+    }
+}
