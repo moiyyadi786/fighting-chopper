@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phaser - Making your first game, part 9</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <script type="text/javascript" src="libs/jquery/jquery.js"></script>
+    <script type="text/javascript" src="js/phaser.min.js"></script>
+    <script type="text/javascript" src="js/game.min.js"></script>
+    <!--script type="text/javascript" src="js/app/app.js"></script-->
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+		<script>
+		//Testing my GIT change
+		$(function(){
+		// See if this is a touch device
+		if ('ontouchstart' in window)
+		{
+		  // Set the correct [touchscreen] body class
+		  $('body').removeClass('no-touch').addClass('touch');
+		  $('div.boxInner img').click(function(){
+		     $(this).closest('.boxInner').toggleClass('touchFocus');
+		  });
+		}
+		});
+		$(document).ready(function(){
+		/*$(".box.world").on("click", function(){
+		    var gameWorld = $(this).attr("data-target");*/
+            $(window).resize(function() {
+              setProportions();
+            });
+            $(".replay").on("click", function(){
+             $(this).hide();
+             app.game.destroy();  
+             app = null;
+             app = {};
+             app.score = 0;
+             $("canvas").remove();
+             initiateGame()
+            });
+            console.log("initiate ");
+            initiateGame();
+            
+		//});
+		/*$(".box.ride").on("click", function(){
+		    var ride = $(this).attr("data-target");
+		    app.rider = config[ride];
+		    $("#select-ride").hide();
+
+		});*/
+
+		});
+		</script>
+	</head>
+<body>
+    <!--div class="select-game">
+        <span class="shine">Select Flying Zone</span>
+    </div>
+<div class="wrap">
+
+  <!-- Define all of the tiles: -->
+  <!--div class="box hand world" data-target="cityWorld">
+    <div class="boxInner">
+        <img src="assets/sprite/nyc.png" />
+      <div class="titleBox">City</div>
+    </div>
+  </div>
+  <div class="box hand world" data-target="desertWorld">
+    <div class="boxInner">
+        <img src="assets/sprite/desert.jpg" />
+      <div class="titleBox">Desert</div>
+    </div>
+  </div>
+
+</div>
+</div>
+<div id="select-ride" class="hide-data">
+ <div class="select-game">
+        <span class="shine">Select Your Ride</span>
+ </div-->
+<img src="assets/sprite/replay.png" class="replay"/>
+</body>
+</html>

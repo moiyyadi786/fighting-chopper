@@ -1,0 +1,6 @@
+{
+    "jscodehints.detectedExclusions": [
+        "align-text.js",
+        "/Users/mac27/Desktop/fighter-chopper/node_modules/gulp-uglify/node_modules/vinyl-sourcemaps-apply/node_modules/source-map/lib/source-node.js"
+    ]
+}

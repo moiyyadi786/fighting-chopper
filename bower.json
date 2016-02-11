@@ -1,0 +1,10 @@
+{
+  "name" : "fighter-chopper",
+  "version": "0.1",
+  "dependencies" : {
+    "jquery" : "latest"
+  },
+  "install" : {
+    "path" : "libs"
+  }
+}

@@ -1,0 +1,40 @@
+{"frames": [
+
+{
+	"filename": "fireup00",
+	"frame": {"x":24,"y":238,"w":32,"h":59}
+},
+{
+	"filename": "fireup01",
+	"frame": {"x":99,"y":237,"w":32,"h":60}
+},
+{
+	"filename": "fireup02",
+	"frame": {"x":176,"y":238,"w":32,"h":60}
+},
+{
+	"filename": "fireup03",
+	"frame": {"x":249,"y":237,"w":32,"h":60}
+},
+{
+	"filename": "firedown00",
+	"frame": {"x":24,"y":9,"w":32,"h":59}
+},
+{
+	"filename": "firedown01",
+	"frame": {"x":98,"y":9,"w":32,"h":60}
+},
+{
+	"filename": "firedown02",
+	"frame": {"x":175,"y":9,"w":32,"h":60}
+},
+{
+	"filename": "firedown03",
+	"frame": {"x":248,"y":9,"w":32,"h":60}
+}
+],
+"meta": {
+"frames_fire_up":"0-3",
+"frames_fire_down":"4-7"
+}
+}

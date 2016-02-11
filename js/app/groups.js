@@ -1,3 +1,7 @@
+/*
+groups.js serve contains functions to create group instance
+Groups function accept parameter for new group creation
+*/
 var Groups = function(groupObj, groupName, spriteName, scaleX, scaleY, randomSpeed, velocity, headCount){
 this.groupObj=groupObj;
 this.groupName=groupName;
@@ -37,12 +41,12 @@ Groups.prototype.createHurdles = function(){
     var updesign = config.pipedesign[Utility.randomGenerator(0,4) - 1];
     var count = Utility.randomGenerator(0,6);
     var changeScale = 0;    
-    var scale = 1; 
+    var scale = 1;
+    var redPipe = Utility.randomGenerator(0,5);
+    var pipeGroup = [];
     if(updesign == "increasing"){
          changeScale = Utility.randomGenerator(14,20)/100;
      } else if(updesign == "decreasing"){
-        scale = 1.75;
-        changeScale = -Utility.randomGenerator(14,20)/100;
      } else {
          scale =  Utility.randomGenerator(150,200)/100;
      }
@@ -51,14 +55,17 @@ Groups.prototype.createHurdles = function(){
      if(Utility.randomGenerator(0,13)/3 != 0){
         pipeGap = Utility.randomGenerator(10,30); 
      }
+     
      for(var i = 0; i < count; i++){
       posX -= 39 + pipeGap;
       scale += i * changeScale;
-      var group =   this.groupObj.create(app.game.world.width - posX, 0, this.groupName, sprites[0]);
-      group.anchor.setTo(0.5, 0.5); 
-      group.scale.setTo(1, scale);
-      app.game.physics.enable(group, Phaser.Physics.ARCADE);
-      group.body.velocity.x -= 200;
+      pipeGroup[i] = this.groupObj.create(app.game.world.width - posX, 0, this.groupName, sprites[0]);
+      pipeGroup[i].anchor.setTo(0.5, 0.5); 
+      pipeGroup[i].scale.setTo(1, scale * app.hurdleScale.y);
+      app.game.physics.enable(pipeGroup[i], Phaser.Physics.ARCADE);
+      pipeGroup[i].body.velocity.x -= 200;
+      pipeGroup[i]["pipePosition"] = "up";
+      
      }
      changeScale = 0;
      scale = 1;
@@ -80,11 +87,33 @@ Groups.prototype.createHurdles = function(){
      for(var i = 0; i < count; i++){
       posX -= 38 + pipeGap;
       scale += i * changeScale;
-      var group =   this.groupObj.create(app.game.world.width - posX, app.game.world.height, this.groupName,sprites[1]);
-      group.anchor.setTo(0.5, 0.5); 
-      group.scale.setTo(1, scale);
-      app.game.physics.enable(group, Phaser.Physics.ARCADE);
-      group.body.velocity.x -= 200;
+      pipeGroup[i] =   this.groupObj.create(app.game.world.width - posX, app.game.world.height, this.groupName,sprites[1]);
+      pipeGroup[i].anchor.setTo(0.5, 0.5); 
+      pipeGroup[i].scale.setTo(1, scale * app.hurdleScale.y);
+      app.game.physics.enable(pipeGroup[i], Phaser.Physics.ARCADE);
+      pipeGroup[i].body.velocity.x -= 200;
+      pipeGroup[i]["pipePosition"] = "down";
+     }
+     if(pipeGroup[redPipe]){
+         pipeGroup[redPipe].tint = 0xff0000;
+         //alert( Math.abs((pipeGroup[redPipe].body.sourceHeight * app.hurdleScale.y * pipeGroup[redPipe].scale.y) - (pipeGroup[redPipe].body.sourceHeight * app.hurdleScale.y)));
+         var y = (app.game.world.height - 18) - pipeGroup[redPipe].body.halfHeight;
+         var x = pipeGroup[redPipe].body.position.x;
+         var framesFire = [0,1,2,3];
+         var frameToUse = "firedown00";
+         if(pipeGroup[redPipe].pipePosition === "up"){
+             y = pipeGroup[redPipe].body.halfHeight + 16;
+             x += 5;
+             frameToUse = "fireup00";
+             framesFire = [4,5,6,7];
+         }
+        fire = new Sprite('fire', frameToUse , x, y, app.objectScale.x, app.objectScale.y, 200);
+        fire = fire.createSprite();
+        var fireFrames = fire.animations.add('burn',framesFire); // adding animation
+        fireFrames.play(4, true);
+        app.game.physics.arcade.enable(fire);
+        app.game.world.bringToTop(pipes);
+        
      }
 }
 
@@ -99,9 +128,9 @@ var Sprite = function(spriteName, spriteImage, posX, posY, scaleX, scaleY, veloc
 }
 
 Sprite.prototype.createSprite = function(){
-   var sprite = app.game.add.sprite(app.game.world.width-this.posX, app.game.world.height-this.posY, this.spriteName, this.spriteImage);
+   var sprite = app.game.add.sprite(this.posX,this.posY, this.spriteName, this.spriteImage);
    sprite.anchor.setTo(.5, .5);
-   sprite.scale.setTo(.25,.25);
+   sprite.scale.setTo(this.scaleX, this.scaleY);
    app.game.physics.enable(sprite, Phaser.Physics.ARCADE);
    sprite.body.velocity.x = -200;
    return sprite;

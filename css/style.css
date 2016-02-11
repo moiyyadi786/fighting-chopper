@@ -222,6 +222,11 @@ body.no-touch .boxInner:hover .titleBox, body.touch .boxInner.touchFocus .titleB
       height: 100%;   
       padding-bottom: 30%;
    }
+    .replay{
+        width: 40px;
+        hieght: 35px;
+        margin: 45% 40%;
+    }
 }
 @media only screen and (max-width : 650px) and (min-width : 481px) {
    /* Tablet view: 2 tiles */
@@ -229,6 +234,11 @@ body.no-touch .boxInner:hover .titleBox, body.touch .boxInner.touchFocus .titleB
       width: 50%;
       padding-bottom: 50%;
    }
+   .replay{
+      width: 60px;
+      height: 55px;
+      margin: 25% 40%;
+    }
 }
 @media only screen and (max-width : 1050px) and (min-width : 651px) {
    /* Small desktop / ipad view: 3 tiles */
@@ -236,6 +246,11 @@ body.no-touch .boxInner:hover .titleBox, body.touch .boxInner.touchFocus .titleB
       width: 33.3%;
       padding-bottom: 33.3%;
    }
+    .replay{
+        width:80px;
+        height:75px;
+        margin: 25% 40%;
+    }
 }
 @media only screen and (max-width : 1290px) and (min-width : 1051px) {
    /* Medium desktop: 4 tiles */
@@ -244,6 +259,16 @@ body.no-touch .boxInner:hover .titleBox, body.touch .boxInner.touchFocus .titleB
       height: 50%;
       padding-bottom: 10%;
    }
+    .replay{
+        width: 70px;
+        height: 70px;
+        margin: 25% 40%;
+    }
+}
+.replay{
+    position: absolute;
+    display: none;
+    cursor: pointer;
 }
 .hand{
 cursor: pointer;
@@ -291,6 +316,16 @@ background-image: -o-linear-gradient(#FFFFFF, #B7B209);
 background-image: -ms-linear-gradient(#FFFFFF, #B7B209);
 height: 40px;
 }
+@media screen and (max-height: 350px){
+    .text-style{
+       font-size: 18px !important; 
+    }
+    #gems:before{
+        width: 25px !important;
+        height: 20px !important;
+        zoom: 80%;
+    }
+}
 .text-style{
     font-family: 'Exo 2', sans-serif;
     font-size: 26px;
@@ -305,6 +340,7 @@ height: 40px;
 }
 #gems{
     padding-left: 55px;
+    padding-bottom: 10px;
 }
 #gems:before{
     width: 25px;
@@ -313,8 +349,23 @@ height: 40px;
     position: absolute;
     background: url('../assets/sprite/gems.png');
     content: '';
-    background-position: -245px -67px;
+    background-position: -245px -70px;
 }
+#bullets{
+    display: none;
+    padding-left: 55px;
+    padding-bottom: 10px;
+}
+#bullets:before{
+    width: 25px;
+    height: 20px;
+    margin: 5px 0px 0px -35px;
+    position: absolute;
+    background: url('../assets/sprite/bullets.png');
+    content: '';
+    background-position: -75px -11px;
+}
+
 .pl-20{
     padding-left: 20px;   
 }
