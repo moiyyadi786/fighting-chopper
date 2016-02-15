@@ -138,13 +138,13 @@ text-rendering: optimizeLegibility;
 color: antiquewhite;
 background-color: black;
 letter-spacing: .15em;
-text-shadow: 
-  1px -1px 0 #767676, 
-  -1px 2px 1px #737272, 
-  -2px 4px 1px #767474, 
-  -3px 6px 1px #787777, 
-  -4px 8px 1px #7b7a7a, 
-  -5px 10px 1px #7f7d7d, 
+text-shadow:
+  1px -1px 0 #767676,
+  -1px 2px 1px #737272,
+  -2px 4px 1px #767474,
+  -3px 6px 1px #787777,
+  -4px 8px 1px #7b7a7a,
+  -5px 10px 1px #7f7d7d,
   -6px 12px 1px #828181,
 }
 .__brackets-ld-highlight{
@@ -219,7 +219,7 @@ body.no-touch .boxInner:hover .titleBox, body.touch .boxInner.touchFocus .titleB
    /* Smartphone view: 1 tile */
    .box {
       width: 100%;
-      height: 100%;   
+      height: 100%;
       padding-bottom: 30%;
    }
     .replay{
@@ -287,18 +287,18 @@ padding:8px;
     width: 50%;
     color:darkred;
     background: gray -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0     no-repeat;
-      -webkit-background: gray -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0     no-repeat;  
+      -webkit-background: gray -webkit-gradient(linear, left top, right top, from(#222), to(#222), color-stop(0.5, #fff)) 0 0     no-repeat;
     -webkit-background-size: 60px;
     color: rgba(255, 255, 255, 0.1);
     -webkit-background-clip: text;
     animation: shine 5s ease infinite;
 
 }
-@font-face { 
-  font-family: Delicious; src: url('Delicious-Roman.otf'); 
-} 
-@font-face { 
-    font-family: Delicious; font-weight: bold; src: url('Delicious-Bold.otf'); 
+@font-face {
+  font-family: Delicious; src: url('Delicious-Roman.otf');
+}
+@font-face {
+    font-family: Delicious; font-weight: bold; src: url('Delicious-Bold.otf');
 }
 #game-data{
 background-color:#FFF;
@@ -318,7 +318,7 @@ height: 40px;
 }
 @media screen and (max-height: 350px){
     .text-style{
-       font-size: 18px !important; 
+       font-size: 18px !important;
     }
     #gems:before{
         width: 25px !important;
@@ -351,6 +351,20 @@ height: 40px;
     content: '';
     background-position: -245px -70px;
 }
+/*#gas{
+    padding-left: 55px;
+    padding-bottom: 10px;
+    width: 25px;
+    height: 21px;
+}
+#gas:before{
+    width: 25px;
+    height: 21px;
+    margin: 5px 0px 0px -35px;
+    position: absolute;
+    background: url('../assets/sprite/gas.png');
+    content: '';
+}*/
 #bullets{
     display: none;
     padding-left: 55px;
@@ -367,7 +381,7 @@ height: 40px;
 }
 
 .pl-20{
-    padding-left: 20px;   
+    padding-left: 20px;
 }
 @-webkit-keyframes shine
 {
@@ -378,5 +392,108 @@ height: 40px;
     100%
     {
         background-position: top right;
+    }
+}
+.meter {
+    height: 14px;
+    width: 100px;
+    position: relative;
+    float:right;
+    margin: 1px 0 60px 0;
+    padding: 5px 10px;
+    background: #555;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    padding: 5px;
+    -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+    -moz-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+    box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);*/
+}
+.meter .gas{
+    position: absolute;
+    margin-left: -40px;
+    margin-top: -5px;
+    height: 100%;
+}
+.meter > span {
+    display: block;
+    float: left;
+    height: 100%;
+    width: 200px;
+   -webkit-border-top-right-radius: 20px;
+    -webkit-border-bottom-right-radius: 20px;
+    -moz-border-radius-topright: 20px;
+    -moz-border-radius-bottomright: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    -webkit-border-top-left-radius: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background-color: rgb(43,194,83);
+    background-image: -webkit-gradient( linear,
+        left bottom,
+        left top,
+        color-stop(0, rgb(43,194,83)),
+        color-stop(1, rgb(84,240,84)) );
+    background-image: -moz-linear-gradient( center bottom, rgb(43,194,83) 37%, rgb(84,240,84) 69% );
+    -webkit-box-shadow: inset 0 2px 9px rgba(255,255,255,0.3),
+        inset 0 -2px 6px rgba(0,0,0,0.4);
+    -moz-box-shadow: inset 0 2px 9px rgba(255,255,255,0.3),
+        inset 0 -2px 6px rgba(0,0,0,0.4);
+    box-shadow: inset 0 2px 9px rgba(255,255,255,0.3),
+    inset 0 -2px 6px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: hidden;
+}
+.meter > span:after, .animate > span > span {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-image: -webkit-gradient(linear, 0 0, 100% 100%,
+        color-stop(.25, rgba(255, 255, 255, .2)),
+        color-stop(.25, transparent),
+        color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)),
+        color-stop(.75, rgba(255, 255, 255, .2)),
+        color-stop(.75, transparent), to(transparent) );
+    background-image: -moz-linear-gradient( -45deg,
+        rgba(255, 255, 255, .2) 25%,
+        transparent 25%, transparent 50%,
+        rgba(255, 255, 255, .2) 50%,
+        rgba(255, 255, 255, .2) 75%, transparent 75%, transparent );
+    z-index: 1;
+    -webkit-background-size: 20px 20px;
+    -moz-background-size: 20px 20px;
+    -webkit-animation: move 3s linear infinite;
+    -webkit-border-top-right-radius: 8px;
+    -webkit-border-bottom-right-radius: 8px;
+    -moz-border-radius-topright: 8px;
+    -moz-border-radius-bottomright: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    -webkit-border-top-left-radius: 20px;
+    -webkit-border-bottom-left-radius: 20px;
+    -moz-border-radius-topleft: 20px;
+    -moz-border-radius-bottomleft: 20px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    overflow: hidden;
+}
+.animate > span:after {
+    display: none;
+}
+
+@-webkit-keyframes move {
+    0% {
+       background-position: 0 0;
+    }
+    100% {
+       background-position: 50px 50px;
     }
 }

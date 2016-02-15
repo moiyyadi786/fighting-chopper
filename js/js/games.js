@@ -9,23 +9,27 @@ var config = {
     enemy: {
       name: "heli",
       img: "assets/sprite/heli.gif",
-      x: 75,
-      y: 30,
+      jsonFrame: "assets/sprite/heli.json",
+      scaleX: .8,
+      scaleY: .8,
       frames: [0,1,2],
       framesRate: 10
     },
     enemy2: {
-      name: "dragon",
-      img: "assets/sprite/dragon.png",
-      x: 116,
-      y: 98,
-      frames:[0,1,2,3],
-      framesRate: 7
+      name: "bird",
+      img: "assets/sprite/bird.png",
+      jsonFrame: "assets/sprite/bird.json",
+      scaleX: .35,
+      scaleY: .35,
+      frames: [0,1,2],
+      framesRate: 10
     },
     pipes: {
       name: "pipes",
       img: "assets/sprite/pipe.png",
       jsonFrame: "assets/sprite/pipe_frames.json",
+      scaleX: .25,
+      scaleY: .25
     },
     savior: {
       name: "honeybee",
@@ -52,8 +56,11 @@ var config = {
     img: "assets/sprite/gems.png",
     jsonFrame: "assets/sprite/gems_frames.json",
   },
-  
-    bullets: {
+  gas: {
+    name: "gas",
+    img: "assest/sprite/gas.png"
+  },
+  bullets: {
     name: "bullets",
     img: "assets/sprite/bullets.png",
     jsonFrame: "assets/sprite/bullets_frames.json",
@@ -91,7 +98,7 @@ var config = {
     enemies: Utility.randomGenerator(200, 300),
     enemies2: Utility.randomGenerator(600, 800),
     savior: Utility.randomGenerator(500, 800),
-    gems: Utility.randomGenerator(400, 500),
+    //gems: Utility.randomGenerator(400, 500),
     gun: Utility.randomGenerator(500, 800)
   }
   }
@@ -162,9 +169,9 @@ function setProportions(){
     }
      if(app.objectScale.y/app.objectScale.y > 1.5){
         app.objectScale.y = app.objectScale.x * 1.25
-    }   
+    }
 }
-function initiateGame(){;
+function initiateGame(){
       bgtile = null;
       player = null;
       platforms = null;
@@ -175,7 +182,7 @@ function initiateGame(){;
       gems = null;
       ledge = null;
       pipes = null;
-      enemies = null; 
+      enemies = null;
       enemies2 = null;
       gun = null;
       allGems = null;
@@ -186,6 +193,7 @@ function initiateGame(){;
       bulletsCount = 0;
       fired = 0;
       fire = null;
+      gas = 100;
       this.webkitAudioContext = null;
       this.AudioContext = null;
     $("#game-data").remove();
@@ -193,25 +201,28 @@ function initiateGame(){;
     $("#select-world").hide();
      app.rider = config["chopper"];
      setProportions();
-     app.game = new Phaser.Game(app.screenWidth, app.screenHeight, Phaser.AUTO, '#fighting-chopper', { preload: preload, create: create, update: update });
-}
-function preload() {
+     //console.log("before");
+     app.game = new Phaser.Game(app.screenWidth, app.screenHeight, Phaser.AUTO, '#fighting-chopper',{
+preload: function() {
+    console.log(app);
     app.game.load.image('bgtile', app.world.backgroundImage);
     app.game.load.image('platform', config.ground.img);
     app.game.load.atlasJSONHash('pipes',app.world.pipes.img, app.world.pipes.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     //app.game.load.image('button', config.buttonUp.img);
     app.game.load.atlasJSONHash('rider', app.rider.img, app.rider.jsonFrame);
     app.game.load.atlasJSONHash('gems', config.gems.img, config.gems.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    app.game.load.image('gas', "assest/sprite/gas.png");
     app.game.load.atlasJSONHash('playerbullets', config.bullets.img, config.bullets.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
-    app.game.load.atlasJSONHash('saviors', app.world.savior.img, app.world.savior.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    app.game.load.atlasJSONHash('saviors', app.world.savior.img, app.world.savior.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     //app.game.load.spritesheet('pipe', 'assets/sprite/pair.png', 155, 133);
-    app.game.load.spritesheet('enemy', app.world.enemy.img, app.world.enemy.x, app.world.enemy.y);
-    app.game.load.spritesheet('enemy2', app.world.enemy2.img, app.world.enemy2.x, app.world.enemy2.y);
+        app.game.load.atlasJSONHash('enemy', app.world.enemy.img, app.world.enemy.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    app.game.load.atlasJSONHash('enemy2', app.world.enemy2.img, app.world.enemy2.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     app.game.load.atlasJSONHash('fire', config.fire.img, config.fire.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+
     app.game.load.image('gun', config.gun.img);
     app.game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
-}
-function create() {
+},
+create: function() {
     var newGun = new Gun('playerbullets','bulletred');
     app.game.physics.startSystem(Phaser.Physics.ARCADE);
     app.game.stage.backgroundColor = "#81BEF7";
@@ -253,17 +264,16 @@ function create() {
     gems = app.game.add.group();
     bullets = app.game.add.group();
     pipes = app.game.add.group();
-    $("canvas").after("<div id='game-data' class='text-style'><span id='score-text'>SCORE:<span id='score'>0</span></span><span id='gems'>0</span><span id='bullets'></span></div>");
-    
+    $("canvas").after("<div id='game-data' class='text-style'><span id='score-text'>SCORE:<span id='score'>0</span></span><span id='bullets'></span><div class='meter animate'><img src='assets/sprite/gas.png' class='gas'><span style='width: 100%'><span></span></span></div></div>");
     app.game.input.onDown.add(function(pointer) {
         swipeCoordX = pointer.clientX;
-        swipeCoordY = pointer.clientY;    
+        swipeCoordY = pointer.clientY;
     }, this);
 
     app.game.input.onUp.add(function(pointer) {
         swipeCoordX2 = pointer.clientX;
         swipeCoordY2 = pointer.clientY;
-        if(swipeCoordX2 > swipeCoordX + swipeMinDistance && bulletsCount > 0){           
+        if(swipeCoordX2 > swipeCoordX + swipeMinDistance && bulletsCount > 0){
             newGun.fire();
             bulletsCount -= 1;
             $("#bullets").text(bulletsCount);
@@ -272,10 +282,8 @@ function create() {
             $("#bullets").hide();
         }
     }, this);
-}
-
-
-function update() {
+},
+update: function() {
     app.game.physics.arcade.overlap(player, platforms, killPlayer);
     app.game.physics.arcade.overlap(player, enemies, killPlayer);
     app.game.physics.arcade.overlap(player, enemies2, killPlayer);
@@ -305,8 +313,10 @@ function update() {
     if(player.alive){
     app.score += 1;
     }
-    if(app.score % 10 ==0){
+    if(app.score % 10 == 0){
     $("#score").text(app.score/10);
+    gas = gas - 1;
+    $(".meter > span").css("width", gas+"%")
     }
      if(app.score % config.occurance.gems == 0){
         if(typeof gems.children != "undefined"){
@@ -322,10 +332,17 @@ function update() {
      }
     if(app.score % config.occurance.enemies == 0){
      var count = Utility.randomGenerator(1,5);
-     var createEnemies = new Groups(enemies,'enemy', null, .8 * app.objectScale.x, .8 * app.objectScale.y, 500, 10,count);
+     var createEnemies = new Groups(enemies,'enemy', null,app.world.enemy.scaleX * app.objectScale.x, app.world.enemy.scaleY * app.objectScale.y, 500, 10,count);
      var enemyGroup = createEnemies.createGroups();
      enemyGroup.callAll('animations.add', 'animations', 'fly', app.world.enemy.frames, app.world.enemy.framesRate, true);
      enemyGroup.callAll('animations.play', 'animations', 'fly');
+    }
+    if(app.score % config.occurance.enemies2 == 0){
+     var count = Utility.randomGenerator(1,5);
+     var createEnemies2 = new Groups(enemies2,'enemy2', null,app.world.enemy2.scaleX * app.objectScale.x, app.world.enemy2.scaleY * app.objectScale.y, 500, 10,count);
+     var enemyGroup2 = createEnemies2.createGroups();
+     enemyGroup2.callAll('animations.add', 'animations', 'fly', app.world.enemy2.frames, app.world.enemy2.framesRate, true);
+     enemyGroup2.callAll('animations.play', 'animations', 'fly');
     }
     if(app.score % config.occurance.pipe == 0){
      app.hurdle = app.score/350;
@@ -343,20 +360,12 @@ function update() {
         app.game.physics.enable(gun, Phaser.Physics.ARCADE);
         gun.body.velocity.x = -200;
     }
-  /*if(app.score % config.occurance.enemies2 == 0){
-     var count2 = Utility.randomGenerator(1,5);
-     var createEnemies2 = new Groups(enemies2,'enemy2', null, .8 * app.objectScale.x, .8 * app.objectScale.y, 500, 10,count2);
-     var enemyGroup2 = createEnemies2.createGroups();
-     enemyGroup2.callAll('animations.add', 'animations', 'fly', app.world.enemy2.frames, app.world.enemy2.framesRate, true);
-     enemyGroup2.callAll('animations.play', 'animations', 'fly');
-  }*/
-  /*if(app.score % config.stage.score == 0){
-      app.game.paused = true;
-      completeStage();
-  }*/
+}});
+app.game.paused = false;
 }
+
 function completeStage(){
-    $("canvas").remove();   
+    $("canvas").remove();
 }
 function actionOnClick(){
     player.body.velocity.y = -105;
@@ -370,7 +379,7 @@ function killPlayer(player){
     explode.onComplete.add(function(){
         app.game.paused = true;
         $(".replay").show();
-    });    
+    });
     explode.play(10, false);
 }
 function collectGun(player, gun){
