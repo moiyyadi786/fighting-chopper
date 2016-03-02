@@ -1,6 +1,6 @@
 var config = {
   cityWorld: {
-    backgroundImage: "assets/sprite/nyc.png", 
+    backgroundImage: "assets/sprite/nyc.png",
     enemy: {
       name: "heli",
       img: "assets/sprite/heli.gif",
@@ -29,7 +29,7 @@ var config = {
     savior: {
       name: "honeybee",
       img: "assets/sprite/honey-bee.png",
-      jsonFrame: "assets/sprite/honey-bee-frames.json", 
+      jsonFrame: "assets/sprite/honey-bee-frames.json",
       spriteName: "honeyFly01",
       scaleX: .25,
       scaleY: .25
@@ -53,7 +53,9 @@ var config = {
   },
   gas: {
     name: "gas",
-    img: "assest/sprite/gas.png"
+    img: "assets/sprite/gas.png",
+    scaleX: .8,
+    scaleY: 1
   },
   bullets: {
     name: "bullets",
@@ -76,7 +78,7 @@ var config = {
   dragonRider: {
     name: "chopper",
     img: "assets/sprite/dragonrider.png",
-    jsonFrame: "assets/sprite/dragon_rider.json"   
+    jsonFrame: "assets/sprite/dragon_rider.json"
   },
   gun: {
       name: "gun",
@@ -88,11 +90,22 @@ var config = {
       jsonFrame: "assets/sprite/fire-frames.json"
   },
   pipedesign: ["uniform", "increasing", "decreasing"],
+  killerPlane: {
+    name: "",
+    image: "assets/sprite/killer-plane.png",
+    scaleX: .55,
+    scaleY: .75
+  },
+  missile: {
+    image: "assets/sprite/missile.gif",
+    scaleX: 1,
+    scaleY: 1
+  },
   occurance: {
     pipe: Utility.randomGenerator(200, 300),
     enemies: Utility.randomGenerator(200, 300),
     enemies2: Utility.randomGenerator(600, 800),
-    savior: Utility.randomGenerator(500, 800),
+    savior: Utility.randomGenerator(700, 800),
     //gems: Utility.randomGenerator(400, 500),
     gun: Utility.randomGenerator(500, 800)
   }

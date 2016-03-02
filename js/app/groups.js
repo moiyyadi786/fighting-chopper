@@ -13,16 +13,16 @@ this.velocity=velocity;
 this.headCount=headCount;
 };
 Groups.prototype.createGroups = function(){
-    
+
     for(var i = 0 ; i < this.headCount; i++){
      var posX = 50 + (i * -200);
-     var posY = Utility.randomGenerator(100, app.game.world.height-50);
-     var group =   this.groupObj.create(app.game.world.width - posX, app.game.world.height - posY, this.groupName);
-     group.anchor.setTo(0.5, 0.5); 
+     var posY = Utility.randomGenerator(100, game.world.height-50);
+     var group =   this.groupObj.create(game.world.width - posX, game.world.height - posY, this.groupName);
+     group.anchor.setTo(0.5, 0.5);
      group.scale.setTo(this.scaleX, this.scaleY)
      //var flyHeli = heli.animations.add('walk');
      //flyHeli.play(10, true);
-     app.game.physics.enable(group, Phaser.Physics.ARCADE);
+     game.physics.enable(group, Phaser.Physics.ARCADE);
      var speed = Math.floor((Math.random() * this.randomSpeed)) + this.velocity;
      if(this.randomSpeed > 0){
      if(speed < 250 ){
@@ -40,7 +40,7 @@ Groups.prototype.createHurdles = function(){
     var posX = -50;
     var updesign = config.pipedesign[Utility.randomGenerator(0,4) - 1];
     var count = Utility.randomGenerator(0,6);
-    var changeScale = 0;    
+    var changeScale = 0;
     var scale = 1;
     var redPipe = Utility.randomGenerator(0,5);
     var pipeGroup = [];
@@ -53,19 +53,19 @@ Groups.prototype.createHurdles = function(){
      var sprites = this.spriteName.split("~");
      var pipeGap = 0;
      if(Utility.randomGenerator(0,13)/3 != 0){
-        pipeGap = Utility.randomGenerator(10,30); 
+        pipeGap = Utility.randomGenerator(10,30);
      }
-     
+
      for(var i = 0; i < count; i++){
       posX -= 39 + pipeGap;
       scale += i * changeScale;
-      pipeGroup[i] = this.groupObj.create(app.game.world.width - posX, 0, this.groupName, sprites[0]);
-      pipeGroup[i].anchor.setTo(0.5, 0.5); 
+      pipeGroup[i] = this.groupObj.create(game.world.width - posX, 0, this.groupName, sprites[0]);
+      pipeGroup[i].anchor.setTo(0.5, 0.5);
       pipeGroup[i].scale.setTo(1, scale * app.hurdleScale.y);
-      app.game.physics.enable(pipeGroup[i], Phaser.Physics.ARCADE);
+      game.physics.enable(pipeGroup[i], Phaser.Physics.ARCADE);
       pipeGroup[i].body.velocity.x -= 200;
       pipeGroup[i]["pipePosition"] = "up";
-      
+
      }
      changeScale = 0;
      scale = 1;
@@ -73,8 +73,8 @@ Groups.prototype.createHurdles = function(){
      count = Utility.randomGenerator(0,6);
      pipeGap = 0;
      if(Utility.randomGenerator(0,13)/2 == 0){
-        pipeGap = Utility.randomGenerator(10,30); 
-     } 
+        pipeGap = Utility.randomGenerator(10,30);
+     }
     if(updesign == "increasing"){
          changeScale = Utility.randomGenerator(14,20)/100;
      } else if(updesign == "decreasing"){
@@ -87,17 +87,17 @@ Groups.prototype.createHurdles = function(){
      for(var i = 0; i < count; i++){
       posX -= 38 + pipeGap;
       scale += i * changeScale;
-      pipeGroup[i] =   this.groupObj.create(app.game.world.width - posX, app.game.world.height, this.groupName,sprites[1]);
-      pipeGroup[i].anchor.setTo(0.5, 0.5); 
+      pipeGroup[i] =   this.groupObj.create(game.world.width - posX, game.world.height, this.groupName,sprites[1]);
+      pipeGroup[i].anchor.setTo(0.5, 0.5);
       pipeGroup[i].scale.setTo(1, scale * app.hurdleScale.y);
-      app.game.physics.enable(pipeGroup[i], Phaser.Physics.ARCADE);
+      game.physics.enable(pipeGroup[i], Phaser.Physics.ARCADE);
       pipeGroup[i].body.velocity.x -= 200;
       pipeGroup[i]["pipePosition"] = "down";
      }
      if(pipeGroup[redPipe]){
          pipeGroup[redPipe].tint = 0xff0000;
          //alert( Math.abs((pipeGroup[redPipe].body.sourceHeight * app.hurdleScale.y * pipeGroup[redPipe].scale.y) - (pipeGroup[redPipe].body.sourceHeight * app.hurdleScale.y)));
-         var y = (app.game.world.height - 18) - pipeGroup[redPipe].body.halfHeight;
+         var y = (game.world.height - 18) - pipeGroup[redPipe].body.halfHeight;
          var x = pipeGroup[redPipe].body.position.x;
          var framesFire = [0,1,2,3];
          var frameToUse = "firedown00";
@@ -107,13 +107,13 @@ Groups.prototype.createHurdles = function(){
              frameToUse = "fireup00";
              framesFire = [4,5,6,7];
          }
-        fire = new Sprite('fire', frameToUse , x, y, app.objectScale.x, app.objectScale.y, 200);
-        fire = fire.createSprite();
-        var fireFrames = fire.animations.add('burn',framesFire); // adding animation
+        app.fire = new Sprite('fire', frameToUse , x, y, app.objectScale.x, app.objectScale.y, 200);
+        app.fire = app.fire.createSprite();
+        var fireFrames = app.fire.animations.add('burn',framesFire); // adding animation
         fireFrames.play(4, true);
-        app.game.physics.arcade.enable(fire);
-        app.game.world.bringToTop(pipes);
-        
+        game.physics.arcade.enable(app.fire);
+        game.world.bringToTop(app.pipes);
+
      }
 }
 
@@ -128,10 +128,10 @@ var Sprite = function(spriteName, spriteImage, posX, posY, scaleX, scaleY, veloc
 }
 
 Sprite.prototype.createSprite = function(){
-   var sprite = app.game.add.sprite(this.posX,this.posY, this.spriteName, this.spriteImage);
+   var sprite = game.add.sprite(this.posX,this.posY, this.spriteName, this.spriteImage);
    sprite.anchor.setTo(.5, .5);
    sprite.scale.setTo(this.scaleX, this.scaleY);
-   app.game.physics.enable(sprite, Phaser.Physics.ARCADE);
+   game.physics.enable(sprite, Phaser.Physics.ARCADE);
    sprite.body.velocity.x = -200;
    return sprite;
 }

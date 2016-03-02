@@ -35,7 +35,7 @@
             });
             $(".replay").on("click", function(){
              $(this).hide();
-             app.game.destroy();  
+             game.destroy();  
              app = null;
              app = {};
              app.score = 0;
@@ -44,7 +44,7 @@
             });
             console.log("initiate ");
             initiateGame();
-            
+
 		//});
 		/*$(".box.ride").on("click", function(){
 		    var ride = $(this).attr("data-target");
