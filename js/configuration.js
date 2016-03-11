@@ -101,6 +101,14 @@ var config = {
     scaleX: 1,
     scaleY: 1
   },
+  machineGun1:{
+      name: "machineGun1",
+      img: "assets/sprite/machine-guns.png",
+      jsonFrame: "assets/sprite/machine-guns-frames.json",
+      spriteName: "machineGun01",
+      scaleX: .35,
+      scaleY: .35     
+  },
   occurance: {
     pipe: Utility.randomGenerator(200, 300),
     enemies: Utility.randomGenerator(200, 300),

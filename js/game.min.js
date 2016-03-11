@@ -106,6 +106,14 @@ var config = {
     scaleX: 1,
     scaleY: 1
   },
+  machineGun1:{
+      name: "machineGun1",
+      img: "assets/sprite/machine-guns.png",
+      jsonFrame: "assets/sprite/machine-guns-frames.json",
+      spriteName: "machineGun01",
+      scaleX: .35,
+      scaleY: .35     
+  },
   occurance: {
     pipe: Utility.randomGenerator(200, 300),
     enemies: Utility.randomGenerator(200, 300),
@@ -185,7 +193,7 @@ function initiateGame(){
      setProportions();
      //console.log("before");
      game = new Phaser.Game(app.screenWidth, app.screenHeight, Phaser.AUTO, '#fighting-chopper',{
-preload: function() {
+    preload: function() {
     //console.log(app);
     game.load.image('bgtile', app.world.backgroundImage);
     game.load.image('platform', config.ground.img);
@@ -205,7 +213,7 @@ preload: function() {
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
     showDown();
 },
-create: function() {
+   create: function() {
     var newGun = new Gun('playerbullets','bulletred');
     createBasic(app);
     //  The score
@@ -242,6 +250,10 @@ create: function() {
             $("#bullets").hide();
         }
     }, this);
+    
+    setTimeout(function(){
+    game.state.start('cityShowDown');
+    }, 5000);
 },
 update: function() {
     game.physics.arcade.overlap(player, app.platforms, killPlayer);
@@ -298,13 +310,13 @@ update: function() {
      enemyGroup.callAll('animations.add', 'animations', 'fly', app.world.enemy.frames, app.world.enemy.framesRate, true);
      enemyGroup.callAll('animations.play', 'animations', 'fly');
     }
-    if(app.score % config.occurance.enemies2 == 0){
+    /*if(app.score % config.occurance.enemies2 == 0){
      var count = Utility.randomGenerator(0,3);
      var createEnemies2 = new Groups(app.enemies2,'enemy2', null,app.world.enemy2.scaleX * app.objectScale.x, app.world.enemy2.scaleY * app.objectScale.y, 500, 10,count);
      var enemyGroup2 = createEnemies2.createGroups();
      enemyGroup2.callAll('animations.add', 'animations', 'fly', app.world.enemy2.frames, app.world.enemy2.framesRate, true);
      enemyGroup2.callAll('animations.play', 'animations', 'fly');
-    }
+    }*/
     if(app.score % config.occurance.pipe == 0){
      app.hurdle = app.score/350;
      if(app.hurdle > 4){
@@ -325,10 +337,6 @@ update: function() {
     if((gas == 55 || gas == 30) && app.score % 10 == 0){
       fuel = new Sprite('gas', '', game.world.width + 100, Utility.randomGenerator(100,150), config.gas.scaleX * app.objectScale.x, config.gas.scaleY * app.objectScale.y, 200);
       fuel = fuel.createSprite();
-    }
-    if(app.score > 200){
-      //app.game.state.destroy();
-      game.state.start('cityShowDown');
     }
 }});
 game.paused = false;
@@ -583,37 +591,86 @@ game.state.add('cityShowDown',{
     game.load.atlasJSONHash('rider', app.rider.img, app.rider.jsonFrame);
     game.load.image('killerPlane', config.killerPlane.image);
     game.load.image('missile', config.missile.image);
+    game.load.atlasJSONHash('machinegun1', config.machineGun1.img, config.machineGun1.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
   },
   create: function(){
     createBasic(app);
-    this.killerPlane = game.add.sprite(app.screenWidth + 40, app.screenHeight - 300, 'killerPlane');
+    this.killerPlane = game.add.sprite(app.screenWidth + 40, app.screenHeight - 350, 'killerPlane');
     this.killerPlane.scale.set(config.killerPlane.scaleX * app.objectScale.x, config.killerPlane.scaleY * app.objectScale.y);
     game.physics.arcade.enable(this.killerPlane, Phaser.Physics.ARCADE);
     this.killerPlane.body.velocity.x = -50;
     missile = [];
     missileNumber = 0;
     app.score = 0;
+    var self = this;
+    killerPlaneMoveInterval = setInterval(function(){
+      self.killerPlane.body.velocity.y = -30;
+      if(self.killerPlane.body.position.y < 100){
+        self.killerPlane.body.velocity.y = 30;
+      }
+      self.moveTime = Utility.randomGenerator(3500, 5500);
+      setTimeout(function(){
+          self.killerPlane.body.velocity.y = 0;
+        }, self.moveTime);
+    }, 8000);
+     missleInterval = setInterval(function(){
+      var attack = Utility.randomGenerator(0,2);
+      for(var i = 0; i <= attack; i++){
+        missile[missileNumber] = new Sprite('missile', '', self.killerPlane.body.position.x, self.killerPlane.body.position.y + 30, config.missile.scaleX * app.objectScale.x, config.missile.scaleY * app.objectScale.y, 200);
+        missile[missileNumber] = missile[missileNumber].createSprite();
+        missile[missileNumber].angle += 180;
+        if((Utility.randomGenerator(0, 10) % 2) == 0){
+        if(self.killerPlane.body.position.y < 100){
+           missile[missileNumber].body.gravity.y = Utility.randomGenerator(40, 80);
+        } else if(app.screenHeight - self.killerPlane.body.position.y < 100){
+           missile[missileNumber].body.gravity.y = -Utility.randomGenerator(40, 80);
+        } else {
+          missile[missileNumber].body.gravity.y = Utility.randomGenerator(40, 80);
+          if((Utility.randomGenerator(0, 10) % 2) == 0){
+            missile[missileNumber].body.gravity.y = -missile[missileNumber].body.gravity.y;
+          }
+        }
+        self.currentNumber = missileNumber;
+          setTimeout($.proxy(function(currentNumber){
+            missile[self.currentNumber].body.gravity.y = 0;
+          }, self), Utility.randomGenerator(100, 150));
+        }
+        missileNumber++;
+      }
+    }, 3000);
+    machineGun1Interval = setInterval(function(){
+      var posX = app.screenWidth - Utility.randomGenerator(80, 120);
+      self.machineGun1 = new Sprite('machinegun1', config.machineGun1.spriteName, posX, app.screenHeight + 30, config.machineGun1.scaleX * app.objectScale.x, config.machineGun1.scaleY * app.objectScale.y, 300);        
+      self.machineGun1 = self.machineGun1.createSprite();
+      game.physics.arcade.enable(self.machineGun1, Phaser.Physics.ARCADE);
+      self.machineGun1.body.gravity.y = -150;
+      setTimeout(function(){
+          self.machineGun1.body.gravity.y = 150;
+      }, Utility.randomGenerator(1000, 1500));
+    }, 10000);
   },
   update: function(){
     app.score += 1;
-    game.physics.arcade.overlap(player, app.platforms, killPlayer);
+    game.physics.arcade.overlap(player, app.platforms, this.killPlayer);
+    game.physics.arcade.overlap(player, missile, this.killBoth);
     if (game.input.activePointer.isDown){
       player.body.velocity.y = -90;
       }
-    if(this.killerPlane.body.x < app.screenWidth - this.killerPlane.body.width + 20){
+    if(this.killerPlane.body.x < app.screenWidth - this.killerPlane.body.width + 30){
       this.killerPlane.body.velocity.x = 0;
     }
-    if(app.score % 30 == 0 && this.killerPlane.body.velocity.x == 0){
-      missile[missileNumber] = new Sprite('missile', '', this.killerPlane.body.position.x, this.killerPlane.body.position.y + 30, config.missile.scaleX * app.objectScale.x, config.missile.scaleY * app.objectScale.y, 200);
-      missile[missileNumber] = missile[missileNumber].createSprite();
-      missile[missileNumber].angle += 180;
-      missile[missileNumber].body.gravity.y = Utility.randomGenerator(100, 150);
-      this.currentNumber = missileNumber;
-      setTimeout($.proxy(function(currentNumber){
-        missile[this.currentNumber].body.gravity.y = 0;
-      }, this), 250);
-      missileNumber++;
-    }
+  },
+  killPlayer: function(player){
+    clearInterval(killerPlaneMoveInterval);
+    clearInterval(missleInterval);
+    killPlayer(player);
+  },
+  killBoth: function(player, enemy){
+    clearInterval(killerPlaneMoveInterval);
+    clearInterval(missleInterval);
+    clearInterval(machineGun1Interval);
+    enemy.kill();
+    killPlayer(player);
   }
 });
 }

@@ -67,7 +67,7 @@ function initiateGame(){
      setProportions();
      //console.log("before");
      game = new Phaser.Game(app.screenWidth, app.screenHeight, Phaser.AUTO, '#fighting-chopper',{
-preload: function() {
+    preload: function() {
     //console.log(app);
     game.load.image('bgtile', app.world.backgroundImage);
     game.load.image('platform', config.ground.img);
@@ -87,7 +87,7 @@ preload: function() {
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
     showDown();
 },
-create: function() {
+   create: function() {
     var newGun = new Gun('playerbullets','bulletred');
     createBasic(app);
     //  The score
@@ -124,6 +124,10 @@ create: function() {
             $("#bullets").hide();
         }
     }, this);
+    
+    setTimeout(function(){
+    game.state.start('cityShowDown');
+    }, 25000);
 },
 update: function() {
     game.physics.arcade.overlap(player, app.platforms, killPlayer);
@@ -180,13 +184,13 @@ update: function() {
      enemyGroup.callAll('animations.add', 'animations', 'fly', app.world.enemy.frames, app.world.enemy.framesRate, true);
      enemyGroup.callAll('animations.play', 'animations', 'fly');
     }
-    if(app.score % config.occurance.enemies2 == 0){
+    /*if(app.score % config.occurance.enemies2 == 0){
      var count = Utility.randomGenerator(0,3);
      var createEnemies2 = new Groups(app.enemies2,'enemy2', null,app.world.enemy2.scaleX * app.objectScale.x, app.world.enemy2.scaleY * app.objectScale.y, 500, 10,count);
      var enemyGroup2 = createEnemies2.createGroups();
      enemyGroup2.callAll('animations.add', 'animations', 'fly', app.world.enemy2.frames, app.world.enemy2.framesRate, true);
      enemyGroup2.callAll('animations.play', 'animations', 'fly');
-    }
+    }*/
     if(app.score % config.occurance.pipe == 0){
      app.hurdle = app.score/350;
      if(app.hurdle > 4){
@@ -207,10 +211,6 @@ update: function() {
     if((gas == 55 || gas == 30) && app.score % 10 == 0){
       fuel = new Sprite('gas', '', game.world.width + 100, Utility.randomGenerator(100,150), config.gas.scaleX * app.objectScale.x, config.gas.scaleY * app.objectScale.y, 200);
       fuel = fuel.createSprite();
-    }
-    if(app.score > 200){
-      //app.game.state.destroy();
-      game.state.start('cityShowDown');
     }
 }});
 game.paused = false;
