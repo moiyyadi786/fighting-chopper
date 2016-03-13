@@ -121,7 +121,8 @@ var config = {
     savior: Utility.randomGenerator(700, 800),
     //gems: Utility.randomGenerator(400, 500),
     gun: Utility.randomGenerator(500, 800)
-  }
+  },
+  flashColors:[0xF5A9A9, 0xF3F781, 0x9FF781, 0x81F7F3, 0x819FF7, 0xE2A9F3, 0xE6E6E6]
   }
 
 var app = {};
@@ -132,6 +133,7 @@ var gemsScore = 0;
 var bulletsCount = 0;
 var fired = 0;
 var fuel;
+var flashIndex= 0;
 var swipeCoordX,
     swipeCoordY,
     swipeCoordX2,
@@ -147,7 +149,7 @@ WebFontConfig = {
 
 };
 function setProportions(){
-     app.screenHeight = $(window).height() -25;
+     app.screenHeight = $(window).height() -35;
      app.screenWidth = $(window).width();
      app.objectScale = {};
      app.hurdleScale = {};
@@ -251,9 +253,9 @@ function initiateGame(){
         }
     }, this);
     
-    setTimeout(function(){
+    changeState = setTimeout(function(){
     game.state.start('cityShowDown');
-    }, 5000);
+    }, 18000);
 },
 update: function() {
     game.physics.arcade.overlap(player, app.platforms, killPlayer);
@@ -267,16 +269,21 @@ update: function() {
     game.physics.arcade.overlap(player, app.pipes, killPlayer);
     game.physics.arcade.overlap(player, app.fire, killPlayer);
     game.physics.arcade.overlap(player, fuel, refuel);
-    if(typeof app.savior != "undefined"){
+    if(app.savior){
         if(app.savior.body.gravity.y == 300){
           game.physics.arcade.overlap(app.savior, app.enemies, killEnemy);
           game.physics.arcade.overlap(app.savior, app.enemies2, killEnemy);
+          player.tint = config.flashColors[flashIndex];
+          flashIndex++;
+          if(flashIndex > 3){
+              flashIndex = 0;
+          }
         }
     }
     app.bgtile.tilePosition.x -= 2;
     if (game.input.activePointer.isDown && gas > 0){
       player.body.velocity.y = -90;
-      if(typeof app.savior != "undefined"){
+      if(app.savior){
           if(app.savior.body.gravity.y == 300){
             app.savior.body.velocity.y = -90;
           }
@@ -358,13 +365,19 @@ function createBasic(app){
   //button = app.game.add.button(app.game.world.width/3 - 20, app.game.world.height - 54, 'button', actionOnClick, this, 2, 1, 0);
 
   // Creating player
-  player = game.add.sprite(32, app.screenHeight - 200, 'rider');
+    createPlayer(32, app.screenHeight - 200, 'rider');
+}
+function createPlayer(x, y, sprite, clean){
+  if(clean){
+    player.kill();
+    player = null;
+  }
+  player = game.add.sprite(x, y, sprite);
   player.scale.set(.35 * app.objectScale.x, .35 * app.objectScale.y);
   app.fly = player.animations.add('fly',[1,2,3]); // adding animation
   app.fly.play(10, true);
   game.physics.arcade.enable(player);
-
-  player.body.gravity.y = 300;
+  player.body.gravity.y = 300;   
 }
 function completeStage(){
     $("canvas").remove();
@@ -383,6 +396,7 @@ function killPlayer(player){
         $(".replay").show();
     });
     explode.play(10, false);
+    clearTimeout(changeState);
 }
 function collectGun(player, gun){
     gun.kill();
@@ -400,7 +414,7 @@ function collectGems(player, gem) {
 
 function invokeSavior(player, savior){
     savior.body.x = player.body.x + 80 * app.objectScale.x;
-    savior.body.y = player.body.y - 10 * app.objectScale.y;
+    savior.body.y = player.body.y * app.objectScale.y;
     saviorFly = savior.animations.add('fly',[0,1,2]); // adding animation
     saviorFly.play(10, true);
     game.physics.arcade.enable(savior);
@@ -410,8 +424,13 @@ function invokeSavior(player, savior){
         saviorFly = savior.animations.add('blink',[0,3,1,4,2]);
         saviorFly.play(10, true);
     },6000);
-    setTimeout(function(){savior.kill()},8000);
-
+    setTimeout(function(){
+      app.savior.kill();
+      app.savior = null;
+      createPlayer(player.body.x, player.body.y, 'rider', true);    
+    },8000);
+   // tweenTint(player, 0xCEECF5, 0xCEECF5, 8000);
+    
 }
 
 function killBoth(bullet, enemy){
@@ -434,7 +453,19 @@ function refuel(player, fuel){
   fuel.kill();
   gas += 50;
 }
-
+function tweenTint(obj, startColor, endColor, time) {    
+    // create an object to tween with our step value at 0    
+    var colorBlend = {step: 0};    // create the tween on this object and tween its step property to 100    
+    var colorTween = game.add.tween(colorBlend).to({step: 100}, time);        // run the interpolateColor function every time the tween updates, feeding it the    
+    // updated value of our tween each time, and set the result as our tint    
+    colorTween.onUpdateCallback(function() {      
+        obj.tint = Phaser.Color.interpolateColor(startColor, endColor, 100, colorBlend.step);       
+    });        
+    // set the object to the start color straight away    
+    obj.tint = startColor;            
+    // start the tween    
+    colorTween.start();
+}
 /*
 groups.js serve contains functions to create group instance
 Groups function accept parameter for new group creation
@@ -578,8 +609,8 @@ var Gun = function(playerbullets, bulletType){
   this.bulletType = bulletType;
 }
 Gun.prototype.fire = function(){
-  var firedBullet = bullets.create(player.body.position.x + 50, player.body.position.y + 20, this.playerbullets, this.bulletType);
-  app.game.physics.enable(firedBullet, Phaser.Physics.ARCADE);
+  var firedBullet = app.bullets.create(player.body.position.x + 50, player.body.position.y + 20, this.playerbullets, this.bulletType);
+  game.physics.enable(firedBullet, Phaser.Physics.ARCADE);
   firedBullet.body.velocity.x = 200;
   firedBullet.outOfBoundsKill = true;   
 }
@@ -595,7 +626,8 @@ game.state.add('cityShowDown',{
   },
   create: function(){
     createBasic(app);
-    this.killerPlane = game.add.sprite(app.screenWidth + 40, app.screenHeight - 350, 'killerPlane');
+     $("canvas + div").html("<img src='assets/sprite/killer-plane.png' class='killer-plane'>");
+    this.killerPlane = game.add.sprite(app.screenWidth + 40, app.screenHeight - 320, 'killerPlane');
     this.killerPlane.scale.set(config.killerPlane.scaleX * app.objectScale.x, config.killerPlane.scaleY * app.objectScale.y);
     game.physics.arcade.enable(this.killerPlane, Phaser.Physics.ARCADE);
     this.killerPlane.body.velocity.x = -50;
@@ -656,13 +688,14 @@ game.state.add('cityShowDown',{
     if (game.input.activePointer.isDown){
       player.body.velocity.y = -90;
       }
-    if(this.killerPlane.body.x < app.screenWidth - this.killerPlane.body.width + 30){
+    if(this.killerPlane.body.x < app.screenWidth - this.killerPlane.body.width){
       this.killerPlane.body.velocity.x = 0;
     }
   },
   killPlayer: function(player){
     clearInterval(killerPlaneMoveInterval);
     clearInterval(missleInterval);
+    clearInterval(machineGun1Interval);
     killPlayer(player);
   },
   killBoth: function(player, enemy){

@@ -314,7 +314,7 @@ background-image: -o-linear-gradient(#FFFFFF, #B7B209);
 
 /* Microsoft IE10 */
 background-image: -ms-linear-gradient(#FFFFFF, #B7B209);
-height: 40px;
+height: 45px;
 }
 @media screen and (max-height: 350px){
     .text-style{
@@ -496,4 +496,10 @@ height: 40px;
     100% {
        background-position: 50px 50px;
     }
+}
+.killer-plane{
+    width: 65px;
+    height: 33px;
+    margin-right: 20px;
+    float: right;
 }

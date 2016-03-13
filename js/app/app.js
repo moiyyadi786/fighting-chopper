@@ -6,6 +6,7 @@ var gemsScore = 0;
 var bulletsCount = 0;
 var fired = 0;
 var fuel;
+var flashIndex= 0;
 var swipeCoordX,
     swipeCoordY,
     swipeCoordX2,
@@ -21,7 +22,7 @@ WebFontConfig = {
 
 };
 function setProportions(){
-     app.screenHeight = $(window).height() -25;
+     app.screenHeight = $(window).height() -35;
      app.screenWidth = $(window).width();
      app.objectScale = {};
      app.hurdleScale = {};
@@ -125,9 +126,9 @@ function initiateGame(){
         }
     }, this);
     
-    setTimeout(function(){
+    changeState = setTimeout(function(){
     game.state.start('cityShowDown');
-    }, 25000);
+    }, 18000);
 },
 update: function() {
     game.physics.arcade.overlap(player, app.platforms, killPlayer);
@@ -141,16 +142,21 @@ update: function() {
     game.physics.arcade.overlap(player, app.pipes, killPlayer);
     game.physics.arcade.overlap(player, app.fire, killPlayer);
     game.physics.arcade.overlap(player, fuel, refuel);
-    if(typeof app.savior != "undefined"){
+    if(app.savior){
         if(app.savior.body.gravity.y == 300){
           game.physics.arcade.overlap(app.savior, app.enemies, killEnemy);
           game.physics.arcade.overlap(app.savior, app.enemies2, killEnemy);
+          player.tint = config.flashColors[flashIndex];
+          flashIndex++;
+          if(flashIndex > 3){
+              flashIndex = 0;
+          }
         }
     }
     app.bgtile.tilePosition.x -= 2;
     if (game.input.activePointer.isDown && gas > 0){
       player.body.velocity.y = -90;
-      if(typeof app.savior != "undefined"){
+      if(app.savior){
           if(app.savior.body.gravity.y == 300){
             app.savior.body.velocity.y = -90;
           }

@@ -116,5 +116,6 @@ var config = {
     savior: Utility.randomGenerator(700, 800),
     //gems: Utility.randomGenerator(400, 500),
     gun: Utility.randomGenerator(500, 800)
-  }
+  },
+  flashColors:[0xF5A9A9, 0xF3F781, 0x9FF781, 0x81F7F3, 0x819FF7, 0xE2A9F3, 0xE6E6E6]
   }

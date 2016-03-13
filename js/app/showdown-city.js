@@ -10,7 +10,8 @@ game.state.add('cityShowDown',{
   },
   create: function(){
     createBasic(app);
-    this.killerPlane = game.add.sprite(app.screenWidth + 40, app.screenHeight - 350, 'killerPlane');
+     $("canvas + div").html("<img src='assets/sprite/killer-plane.png' class='killer-plane'>");
+    this.killerPlane = game.add.sprite(app.screenWidth + 40, app.screenHeight - 320, 'killerPlane');
     this.killerPlane.scale.set(config.killerPlane.scaleX * app.objectScale.x, config.killerPlane.scaleY * app.objectScale.y);
     game.physics.arcade.enable(this.killerPlane, Phaser.Physics.ARCADE);
     this.killerPlane.body.velocity.x = -50;
@@ -71,13 +72,14 @@ game.state.add('cityShowDown',{
     if (game.input.activePointer.isDown){
       player.body.velocity.y = -90;
       }
-    if(this.killerPlane.body.x < app.screenWidth - this.killerPlane.body.width + 30){
+    if(this.killerPlane.body.x < app.screenWidth - this.killerPlane.body.width){
       this.killerPlane.body.velocity.x = 0;
     }
   },
   killPlayer: function(player){
     clearInterval(killerPlaneMoveInterval);
     clearInterval(missleInterval);
+    clearInterval(machineGun1Interval);
     killPlayer(player);
   },
   killBoth: function(player, enemy){
