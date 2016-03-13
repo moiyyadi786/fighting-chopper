@@ -19,7 +19,7 @@ Groups.prototype.createGroups = function(){
      var posY = Utility.randomGenerator(100, game.world.height-50);
      var group =   this.groupObj.create(game.world.width - posX, game.world.height - posY, this.groupName);
      group.anchor.setTo(0.5, 0.5);
-     group.scale.setTo(this.scaleX, this.scaleY)
+     group.scale.setTo(this.scaleX, this.scaleY);
      //var flyHeli = heli.animations.add('walk');
      //flyHeli.play(10, true);
      game.physics.enable(group, Phaser.Physics.ARCADE);

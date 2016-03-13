@@ -89,7 +89,7 @@ function initiateGame(){
     showDown();
 },
    create: function() {
-    var newGun = new Gun('playerbullets','bulletred');
+    app.newGun = new Gun('playerbullets','bulletred',1);
     createBasic(app);
     //  The score
    /* scoreText = app.game.add.text(380, 390, 'Score: 0');
@@ -108,27 +108,28 @@ function initiateGame(){
     app.bullets = game.add.group();
     app.pipes = game.add.group();
     $("canvas").after("<div id='game-data' class='text-style'><span id='score-text'>SCORE:<span id='score'>0</span></span><span id='bullets'></span><div class='meter animate'><img src='assets/sprite/gas.png' class='gas'><span style='width: 100%'><span></span></span></div></div>");
-    game.input.onDown.add(function(pointer) {
-        swipeCoordX = pointer.clientX;
-        swipeCoordY = pointer.clientY;
-    }, this);
-
-    game.input.onUp.add(function(pointer) {
+    app.currentGunElement = $("#bullets");
+    changeState = setTimeout(function(){
+    swipeEvent = null;
+    captureCordinates = null;
+    game.state.start('cityShowDown');
+    }, 20000);
+    swipeEvent = game.input.onUp.add(function(pointer) {
         swipeCoordX2 = pointer.clientX;
         swipeCoordY2 = pointer.clientY;
         if(swipeCoordX2 > swipeCoordX + swipeMinDistance && bulletsCount > 0){
-            newGun.fire();
-            bulletsCount -= 1;
-            $("#bullets").text(bulletsCount);
-        }
-        if(bulletsCount == 0){
-            $("#bullets").hide();
+            app.newGun.fire();
+            bulletsCount -= app.newGun.fireAtOnce;
+            app.currentGunElement.text(bulletsCount);
+            if(bulletsCount == 0){
+               app.currentGunElement.hide();
+            }
         }
     }, this);
-    
-    changeState = setTimeout(function(){
-    game.state.start('cityShowDown');
-    }, 18000);
+    captureCordinates = game.input.onDown.add(function(pointer) {
+        swipeCoordX = pointer.clientX;
+        swipeCoordY = pointer.clientY;
+    }, this);
 },
 update: function() {
     game.physics.arcade.overlap(player, app.platforms, killPlayer);

@@ -216,7 +216,7 @@ function initiateGame(){
     showDown();
 },
    create: function() {
-    var newGun = new Gun('playerbullets','bulletred');
+    app.newGun = new Gun('playerbullets','bulletred',1);
     createBasic(app);
     //  The score
    /* scoreText = app.game.add.text(380, 390, 'Score: 0');
@@ -235,27 +235,28 @@ function initiateGame(){
     app.bullets = game.add.group();
     app.pipes = game.add.group();
     $("canvas").after("<div id='game-data' class='text-style'><span id='score-text'>SCORE:<span id='score'>0</span></span><span id='bullets'></span><div class='meter animate'><img src='assets/sprite/gas.png' class='gas'><span style='width: 100%'><span></span></span></div></div>");
-    game.input.onDown.add(function(pointer) {
-        swipeCoordX = pointer.clientX;
-        swipeCoordY = pointer.clientY;
-    }, this);
-
-    game.input.onUp.add(function(pointer) {
+    app.currentGunElement = $("#bullets");
+    changeState = setTimeout(function(){
+    swipeEvent = null;
+    captureCordinates = null;
+    game.state.start('cityShowDown');
+    }, 20000);
+    swipeEvent = game.input.onUp.add(function(pointer) {
         swipeCoordX2 = pointer.clientX;
         swipeCoordY2 = pointer.clientY;
         if(swipeCoordX2 > swipeCoordX + swipeMinDistance && bulletsCount > 0){
-            newGun.fire();
-            bulletsCount -= 1;
-            $("#bullets").text(bulletsCount);
-        }
-        if(bulletsCount == 0){
-            $("#bullets").hide();
+            app.newGun.fire();
+            bulletsCount -= app.newGun.fireAtOnce;
+            app.currentGunElement.text(bulletsCount);
+            if(bulletsCount == 0){
+               app.currentGunElement.hide();
+            }
         }
     }, this);
-    
-    changeState = setTimeout(function(){
-    game.state.start('cityShowDown');
-    }, 18000);
+    captureCordinates = game.input.onDown.add(function(pointer) {
+        swipeCoordX = pointer.clientX;
+        swipeCoordY = pointer.clientY;
+    }, this);
 },
 update: function() {
     game.physics.arcade.overlap(player, app.platforms, killPlayer);
@@ -487,7 +488,7 @@ Groups.prototype.createGroups = function(){
      var posY = Utility.randomGenerator(100, game.world.height-50);
      var group =   this.groupObj.create(game.world.width - posX, game.world.height - posY, this.groupName);
      group.anchor.setTo(0.5, 0.5);
-     group.scale.setTo(this.scaleX, this.scaleY)
+     group.scale.setTo(this.scaleX, this.scaleY);
      //var flyHeli = heli.animations.add('walk');
      //flyHeli.play(10, true);
      game.physics.enable(group, Phaser.Physics.ARCADE);
@@ -604,15 +605,36 @@ Sprite.prototype.createSprite = function(){
    return sprite;
 }
 
-var Gun = function(playerbullets, bulletType){
+var Gun = function(playerbullets, bulletType, fireAtOnce, scaleX, scaleY, color){
   this.playerbullets = playerbullets;
   this.bulletType = bulletType;
+  this.fireAtOnce = fireAtOnce;
+  this.scaleX = scaleX;
+  this.scaleY = scaleY;
+  this.color = color;
 }
 Gun.prototype.fire = function(){
-  var firedBullet = app.bullets.create(player.body.position.x + 50, player.body.position.y + 20, this.playerbullets, this.bulletType);
-  game.physics.enable(firedBullet, Phaser.Physics.ARCADE);
-  firedBullet.body.velocity.x = 200;
-  firedBullet.outOfBoundsKill = true;   
+ var previousBullet;
+ for(var i=0; i < this.fireAtOnce; i++){
+     var posX;
+     var posY;
+     if(previousBullet){
+          posX = previousBullet.body.position.x - 30;
+      } else {
+          posX = player.body.position.x + 50;
+      }
+      var firedBullet = app.bullets.create(posX, player.body.position.y, this.playerbullets, this.bulletType);
+      game.physics.enable(firedBullet, Phaser.Physics.ARCADE);
+      if(this.scaleX){
+        firedBullet.scale.setTo(this.scaleX, this.scaleY);
+      }
+      firedBullet.body.velocity.x = 200;
+      firedBullet.outOfBoundsKill = true;
+      if(this.color){
+        firedBullet.tint = this.color;
+      }
+      previousBullet = firedBullet;
+  }
 }
 function showDown(){
 game.state.add('cityShowDown',{
@@ -623,10 +645,15 @@ game.state.add('cityShowDown',{
     game.load.image('killerPlane', config.killerPlane.image);
     game.load.image('missile', config.missile.image);
     game.load.atlasJSONHash('machinegun1', config.machineGun1.img, config.machineGun1.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    game.load.atlasJSONHash('bullets', config.bullets.img, config.bullets.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
   },
   create: function(){
     createBasic(app);
-     $("canvas + div").html("<img src='assets/sprite/killer-plane.png' class='killer-plane'>");
+    app.newGun = new Gun("bullets", "bulletsmall", 3, .6, .6, null);
+    app.bullets = game.add.group();
+    bulletsCount = 0;
+    $("canvas + div").html("<span id='machine-gun1' class='machine-gun'></span><img src='assets/sprite/killer-plane.png' class='killer-plane'>");
+    app.currentGunElement = $("#machine-gun1");
     this.killerPlane = game.add.sprite(app.screenWidth + 40, app.screenHeight - 320, 'killerPlane');
     this.killerPlane.scale.set(config.killerPlane.scaleX * app.objectScale.x, config.killerPlane.scaleY * app.objectScale.y);
     game.physics.arcade.enable(this.killerPlane, Phaser.Physics.ARCADE);
@@ -635,6 +662,22 @@ game.state.add('cityShowDown',{
     missileNumber = 0;
     app.score = 0;
     var self = this;
+    swipeEvent = game.input.onUp.add(function(pointer) {
+        swipeCoordX2 = pointer.clientX;
+        swipeCoordY2 = pointer.clientY;
+        if(swipeCoordX2 > swipeCoordX + swipeMinDistance && bulletsCount > 0){
+            app.newGun.fire();
+            bulletsCount -= app.newGun.fireAtOnce;
+            app.currentGunElement.text(bulletsCount);
+            if(bulletsCount == 0){
+               app.currentGunElement.hide();
+            }
+        }
+    }, this);
+    captureCordinates = game.input.onDown.add(function(pointer) {
+        swipeCoordX = pointer.clientX;
+        swipeCoordY = pointer.clientY;
+    }, this);    
     killerPlaneMoveInterval = setInterval(function(){
       self.killerPlane.body.velocity.y = -30;
       if(self.killerPlane.body.position.y < 100){
@@ -679,15 +722,16 @@ game.state.add('cityShowDown',{
       setTimeout(function(){
           self.machineGun1.body.gravity.y = 150;
       }, Utility.randomGenerator(1000, 1500));
-    }, 10000);
+    }, 5000);
   },
   update: function(){
     app.score += 1;
     game.physics.arcade.overlap(player, app.platforms, this.killPlayer);
     game.physics.arcade.overlap(player, missile, this.killBoth);
-    if (game.input.activePointer.isDown){
+    game.physics.arcade.overlap(player, this.machineGun1, this.collectMachineGun);  
+    if(game.input.activePointer.isDown){
       player.body.velocity.y = -90;
-      }
+    }
     if(this.killerPlane.body.x < app.screenWidth - this.killerPlane.body.width){
       this.killerPlane.body.velocity.x = 0;
     }
@@ -704,6 +748,11 @@ game.state.add('cityShowDown',{
     clearInterval(machineGun1Interval);
     enemy.kill();
     killPlayer(player);
+  },
+  collectMachineGun: function(player, machineGun, element){
+    machineGun.kill();
+    window.bulletsCount += 12;
+    app.currentGunElement.show().text(bulletsCount);
   }
 });
 }

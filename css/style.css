@@ -351,6 +351,24 @@ height: 45px;
     content: '';
     background-position: -245px -70px;
 }
+.machine-gun{
+    display: none;
+    padding-left: 100px !important;
+    padding-bottom: 10px; 
+}
+.machine-gun:before{
+    width: 170px;
+    height: 65px;
+    margin: 5px 0px 0px -187px;
+    padding-right: 10px;
+    position: absolute;
+    content: '';
+    zoom: 50%;
+}
+#machine-gun1:before{
+    background: url('../assets/sprite/machine-guns.png');
+    background-position: -185px -436px;
+}
 /*#gas{
     padding-left: 55px;
     padding-bottom: 10px;

@@ -10,6 +10,11 @@
 	"filename": "bulletbue",
 	"frame": {"x":75,"y":12,"w":23,"h":11}
 },
+"bulletsmall":
+{
+    "filename": "bulletsmall",
+    "frame": {"x": 53, "y": 207, "w": 34, "h": 12}
+},
 "blast1":
 {
  	"filename": "blast1",
@@ -19,7 +24,7 @@
     {
  	"filename": "blast2",
 	"frame": {"x":5,"y":36,"w":44,"h":43}   
-}
+}   
 },
 "meta": {
 
