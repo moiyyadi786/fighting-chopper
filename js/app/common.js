@@ -45,7 +45,9 @@ function killPlayer(player){
         $(".replay").show();
     });
     explode.play(10, false);
-    clearTimeout(changeState);
+    //clearTimeout(changeState);
+    clearAllTimeouts(app.world.timeouts);
+    clearAllIntervals(app.world.intervals);
 }
 function collectGun(player, gun){
     gun.kill();
@@ -69,15 +71,15 @@ function invokeSavior(player, savior){
     game.physics.arcade.enable(savior);
     savior.body.gravity.y = 300;
     savior.body.velocity.x = 0;
-    setTimeout(function(){
+    saviorFlyTimeout = setTimeout(function(){
         saviorFly = savior.animations.add('blink',[0,3,1,4,2]);
         saviorFly.play(10, true);
-    },6000);
-    setTimeout(function(){
+    },5000);
+    saviorBlinkTimeout = setTimeout(function(){
       app.savior.kill();
       app.savior = null;
       createPlayer(player.body.x, player.body.y, 'rider', true);    
-    },8000);
+    },6000);
    // tweenTint(player, 0xCEECF5, 0xCEECF5, 8000);
     
 }
@@ -114,4 +116,18 @@ function tweenTint(obj, startColor, endColor, time) {
     obj.tint = startColor;            
     // start the tween    
     colorTween.start();
+}
+function clearAllTimeouts(arr){
+    arr.forEach(function(val){
+        if(window[val]){
+          window.clearTimeout(window[val]);
+        }
+    });
+}
+function clearAllIntervals(arr){
+    arr.forEach(function(val){
+        if(window[val]){
+          window.clearInterval(window[val]);
+        }
+    });
 }

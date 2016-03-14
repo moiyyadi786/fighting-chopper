@@ -19,6 +19,15 @@ var config = {
       frames: [0,1,2],
       framesRate: 10
     },
+    enemy3:{
+      name: "enemeychopper",
+      img: "assets/sprite/enemy-chopper.gif",
+      jsonFrame: "assets/sprite/enemy-chopper-frames.json",
+      scaleX: .35,
+      scaleY: .35,
+      frames: [0,1,2],
+      framesRate: 10        
+    },
     pipes: {
       name: "pipes",
       img: "assets/sprite/pipe.png",
@@ -33,7 +42,13 @@ var config = {
       spriteName: "honeyFly01",
       scaleX: .25,
       scaleY: .25
-    }
+    },
+    timeouts: [ "changeState","saviorFlyTimeout","saviorBlinkTimeout"],
+    intervals: ["generateSavior", "generateGun"]
+  },
+  cityShowdown: {
+    timeouts: ["machineGun1gravity","machineGun1Timeout","starTimeout","planeMoveTimeout"],
+    intervals: ["killerPlaneMoveInterval","missleInterval","machineGun1Interval","starInterval"]
   },
   desertWorld: {
     backgroundImage: "assets/sprite/desert.jpg",
@@ -95,6 +110,11 @@ var config = {
     image: "assets/sprite/killer-plane.png",
     scaleX: .55,
     scaleY: .75
+  },
+  star: {
+      img: "assets/sprite/star.png",
+      scaleX: 1,
+      scaleY: 1
   },
   missile: {
     image: "assets/sprite/missile.gif",

@@ -6,7 +6,7 @@ var gemsScore = 0;
 var bulletsCount = 0;
 var fired = 0;
 var fuel;
-var flashIndex= 0;
+var flashIndex = 0;
 var swipeCoordX,
     swipeCoordY,
     swipeCoordX2,
@@ -21,8 +21,9 @@ WebFontConfig = {
     }
 
 };
-function setProportions(){
-     app.screenHeight = $(window).height() -35;
+function setProportions() {
+     'use strict';
+     app.screenHeight = $(window).height() - 35;
      app.screenWidth = $(window).width();
      app.objectScale = {};
      app.hurdleScale = {};
@@ -45,10 +46,10 @@ function setProportions(){
         app.objectScale.y -= (500 - app.screenHeight)/1000;
         app.hurdleScale.y -= (500 - app.screenHeight)/720;
     }
-    if(app.objectScale.x/app.objectScale.y > 1.5){
+    if(app.objectScale.x / app.objectScale.y > 1.5){
         app.objectScale.x = app.objectScale.y * 1.25
     }
-     if(app.objectScale.y/app.objectScale.y > 1.5){
+     if(app.objectScale.y / app.objectScale.y > 1.5) {
         app.objectScale.y = app.objectScale.x * 1.25
     }
 }
@@ -62,7 +63,7 @@ function initiateGame(){
       this.webkitAudioContext = null;
       this.AudioContext = null;
     $("#game-data").remove();
-    app.world = config[stage];
+    app.world = config["cityWorld"];
     $("#select-world").hide();
      app.rider = config["chopper"];
      setProportions();
@@ -83,6 +84,7 @@ function initiateGame(){
     game.load.atlasJSONHash('enemy', app.world.enemy.img, app.world.enemy.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     game.load.atlasJSONHash('enemy2', app.world.enemy2.img, app.world.enemy2.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     game.load.atlasJSONHash('fire', config.fire.img, config.fire.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    //game.load.atlasJSONHash('enemy3', config.enemy3.img, config.enemy3.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);    
 
     game.load.image('gun', config.gun.img);
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
@@ -112,8 +114,10 @@ function initiateGame(){
     changeState = setTimeout(function(){
     swipeEvent = null;
     captureCordinates = null;
+    clearAllTimeouts(app.world.timeouts);
+    clearAllIntervals(app.world.intervals);
     game.state.start('cityShowDown');
-    }, 20000);
+    }, 30000);
     swipeEvent = game.input.onUp.add(function(pointer) {
         swipeCoordX2 = pointer.clientX;
         swipeCoordY2 = pointer.clientY;
@@ -130,6 +134,17 @@ function initiateGame(){
         swipeCoordX = pointer.clientX;
         swipeCoordY = pointer.clientY;
     }, this);
+    generateSavior = setInterval(function(){
+         app.savior = new Sprite('saviors', app.world.savior.spriteName, game.world.width+150, 110, app.world.savior.scaleX * app.objectScale.x, app.world.savior.scaleY * app.objectScale.y, 200);
+         app.savior = app.savior.createSprite();        
+    }, 9000);
+    generateGun = setInterval(function(){
+        var y = Utility.randomGenerator(50, 150);
+        app.gun = game.add.sprite(game.world.width - 50, game.world.height - y, 'gun');
+        app.gun.scale.set(.3,.3);
+        game.physics.enable(app.gun, Phaser.Physics.ARCADE);
+        app.gun.body.velocity.x = -200;
+    }, 10000);
 },
 update: function() {
     game.physics.arcade.overlap(player, app.platforms, killPlayer);
@@ -181,8 +196,7 @@ update: function() {
      }*/
 
      if(app.score % config.occurance.savior == 0){
-         app.savior = new Sprite('saviors', app.world.savior.spriteName, game.world.width+150, 110, app.world.savior.scaleX * app.objectScale.x, app.world.savior.scaleY * app.objectScale.y, 200);
-         app.savior = app.savior.createSprite();
+
      }
     if(app.score % config.occurance.enemies == 0){
      var count = Utility.randomGenerator(1,5);
@@ -208,13 +222,7 @@ update: function() {
      game.world.bringToTop(app.enemies);
      game.world.bringToTop(app.enemies2);
     }
-   if(app.score % config.occurance.gun == 0){
-        var y = Utility.randomGenerator(50, 150);
-        app.gun = game.add.sprite(game.world.width - 50, game.world.height - y, 'gun');
-        app.gun.scale.set(.3,.3);
-        game.physics.enable(app.gun, Phaser.Physics.ARCADE);
-        app.gun.body.velocity.x = -200;
-    }
+
     if((gas == 55 || gas == 30) && app.score % 10 == 0){
       fuel = new Sprite('gas', '', game.world.width + 100, Utility.randomGenerator(100,150), config.gas.scaleX * app.objectScale.x, config.gas.scaleY * app.objectScale.y, 200);
       fuel = fuel.createSprite();

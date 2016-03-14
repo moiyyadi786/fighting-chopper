@@ -12,14 +12,14 @@ Gun.prototype.fire = function(){
      var posX;
      var posY;
      if(previousBullet){
-          posX = previousBullet.body.position.x - 30;
+          posX = previousBullet.body.position.x - 30 * app.objectScale.x;
       } else {
-          posX = player.body.position.x + 50;
+          posX = player.body.position.x + 50 * app.objectScale.x;
       }
       var firedBullet = app.bullets.create(posX, player.body.position.y, this.playerbullets, this.bulletType);
       game.physics.enable(firedBullet, Phaser.Physics.ARCADE);
       if(this.scaleX){
-        firedBullet.scale.setTo(this.scaleX, this.scaleY);
+        firedBullet.scale.setTo(this.scaleX * app.objectScale.x, this.scaleY * app.objectScale.y);
       }
       firedBullet.body.velocity.x = 200;
       firedBullet.outOfBoundsKill = true;

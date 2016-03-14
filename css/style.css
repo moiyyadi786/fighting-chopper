@@ -518,6 +518,7 @@ height: 45px;
 .killer-plane{
     width: 65px;
     height: 33px;
-    margin-right: 20px;
+    background-color: #46D246;
+    padding-right: 10px;
     float: right;
 }

@@ -24,6 +24,15 @@ var config = {
       frames: [0,1,2],
       framesRate: 10
     },
+    enemy3:{
+      name: "enemeychopper",
+      img: "assets/sprite/enemy-chopper.gif",
+      jsonFrame: "assets/sprite/enemy-chopper-frames.json",
+      scaleX: .35,
+      scaleY: .35,
+      frames: [0,1,2],
+      framesRate: 10        
+    },
     pipes: {
       name: "pipes",
       img: "assets/sprite/pipe.png",
@@ -38,7 +47,13 @@ var config = {
       spriteName: "honeyFly01",
       scaleX: .25,
       scaleY: .25
-    }
+    },
+    timeouts: [ "changeState","saviorFlyTimeout","saviorBlinkTimeout"],
+    intervals: ["generateSavior", "generateGun"]
+  },
+  cityShowdown: {
+    timeouts: ["machineGun1gravity","machineGun1Timeout","starTimeout","planeMoveTimeout"],
+    intervals: ["killerPlaneMoveInterval","missleInterval","machineGun1Interval","starInterval"]
   },
   desertWorld: {
     backgroundImage: "assets/sprite/desert.jpg",
@@ -101,6 +116,11 @@ var config = {
     scaleX: .55,
     scaleY: .75
   },
+  star: {
+      img: "assets/sprite/star.png",
+      scaleX: 1,
+      scaleY: 1
+  },
   missile: {
     image: "assets/sprite/missile.gif",
     scaleX: 1,
@@ -133,7 +153,7 @@ var gemsScore = 0;
 var bulletsCount = 0;
 var fired = 0;
 var fuel;
-var flashIndex= 0;
+var flashIndex = 0;
 var swipeCoordX,
     swipeCoordY,
     swipeCoordX2,
@@ -148,8 +168,9 @@ WebFontConfig = {
     }
 
 };
-function setProportions(){
-     app.screenHeight = $(window).height() -35;
+function setProportions() {
+     'use strict';
+     app.screenHeight = $(window).height() - 35;
      app.screenWidth = $(window).width();
      app.objectScale = {};
      app.hurdleScale = {};
@@ -172,10 +193,10 @@ function setProportions(){
         app.objectScale.y -= (500 - app.screenHeight)/1000;
         app.hurdleScale.y -= (500 - app.screenHeight)/720;
     }
-    if(app.objectScale.x/app.objectScale.y > 1.5){
+    if(app.objectScale.x / app.objectScale.y > 1.5){
         app.objectScale.x = app.objectScale.y * 1.25
     }
-     if(app.objectScale.y/app.objectScale.y > 1.5){
+     if(app.objectScale.y / app.objectScale.y > 1.5) {
         app.objectScale.y = app.objectScale.x * 1.25
     }
 }
@@ -189,7 +210,7 @@ function initiateGame(){
       this.webkitAudioContext = null;
       this.AudioContext = null;
     $("#game-data").remove();
-    app.world = config[stage];
+    app.world = config["cityWorld"];
     $("#select-world").hide();
      app.rider = config["chopper"];
      setProportions();
@@ -210,6 +231,7 @@ function initiateGame(){
     game.load.atlasJSONHash('enemy', app.world.enemy.img, app.world.enemy.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     game.load.atlasJSONHash('enemy2', app.world.enemy2.img, app.world.enemy2.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     game.load.atlasJSONHash('fire', config.fire.img, config.fire.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    //game.load.atlasJSONHash('enemy3', config.enemy3.img, config.enemy3.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);    
 
     game.load.image('gun', config.gun.img);
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
@@ -239,8 +261,10 @@ function initiateGame(){
     changeState = setTimeout(function(){
     swipeEvent = null;
     captureCordinates = null;
+    clearAllTimeouts(app.world.timeouts);
+    clearAllIntervals(app.world.intervals);
     game.state.start('cityShowDown');
-    }, 20000);
+    }, 30000);
     swipeEvent = game.input.onUp.add(function(pointer) {
         swipeCoordX2 = pointer.clientX;
         swipeCoordY2 = pointer.clientY;
@@ -257,6 +281,17 @@ function initiateGame(){
         swipeCoordX = pointer.clientX;
         swipeCoordY = pointer.clientY;
     }, this);
+    generateSavior = setInterval(function(){
+         app.savior = new Sprite('saviors', app.world.savior.spriteName, game.world.width+150, 110, app.world.savior.scaleX * app.objectScale.x, app.world.savior.scaleY * app.objectScale.y, 200);
+         app.savior = app.savior.createSprite();        
+    }, 9000);
+    generateGun = setInterval(function(){
+        var y = Utility.randomGenerator(50, 150);
+        app.gun = game.add.sprite(game.world.width - 50, game.world.height - y, 'gun');
+        app.gun.scale.set(.3,.3);
+        game.physics.enable(app.gun, Phaser.Physics.ARCADE);
+        app.gun.body.velocity.x = -200;
+    }, 10000);
 },
 update: function() {
     game.physics.arcade.overlap(player, app.platforms, killPlayer);
@@ -308,8 +343,7 @@ update: function() {
      }*/
 
      if(app.score % config.occurance.savior == 0){
-         app.savior = new Sprite('saviors', app.world.savior.spriteName, game.world.width+150, 110, app.world.savior.scaleX * app.objectScale.x, app.world.savior.scaleY * app.objectScale.y, 200);
-         app.savior = app.savior.createSprite();
+
      }
     if(app.score % config.occurance.enemies == 0){
      var count = Utility.randomGenerator(1,5);
@@ -335,13 +369,7 @@ update: function() {
      game.world.bringToTop(app.enemies);
      game.world.bringToTop(app.enemies2);
     }
-   if(app.score % config.occurance.gun == 0){
-        var y = Utility.randomGenerator(50, 150);
-        app.gun = game.add.sprite(game.world.width - 50, game.world.height - y, 'gun');
-        app.gun.scale.set(.3,.3);
-        game.physics.enable(app.gun, Phaser.Physics.ARCADE);
-        app.gun.body.velocity.x = -200;
-    }
+
     if((gas == 55 || gas == 30) && app.score % 10 == 0){
       fuel = new Sprite('gas', '', game.world.width + 100, Utility.randomGenerator(100,150), config.gas.scaleX * app.objectScale.x, config.gas.scaleY * app.objectScale.y, 200);
       fuel = fuel.createSprite();
@@ -397,7 +425,9 @@ function killPlayer(player){
         $(".replay").show();
     });
     explode.play(10, false);
-    clearTimeout(changeState);
+    //clearTimeout(changeState);
+    clearAllTimeouts(app.world.timeouts);
+    clearAllIntervals(app.world.intervals);
 }
 function collectGun(player, gun){
     gun.kill();
@@ -421,15 +451,15 @@ function invokeSavior(player, savior){
     game.physics.arcade.enable(savior);
     savior.body.gravity.y = 300;
     savior.body.velocity.x = 0;
-    setTimeout(function(){
+    saviorFlyTimeout = setTimeout(function(){
         saviorFly = savior.animations.add('blink',[0,3,1,4,2]);
         saviorFly.play(10, true);
-    },6000);
-    setTimeout(function(){
+    },5000);
+    saviorBlinkTimeout = setTimeout(function(){
       app.savior.kill();
       app.savior = null;
       createPlayer(player.body.x, player.body.y, 'rider', true);    
-    },8000);
+    },6000);
    // tweenTint(player, 0xCEECF5, 0xCEECF5, 8000);
     
 }
@@ -466,6 +496,20 @@ function tweenTint(obj, startColor, endColor, time) {
     obj.tint = startColor;            
     // start the tween    
     colorTween.start();
+}
+function clearAllTimeouts(arr){
+    arr.forEach(function(val){
+        if(window[val]){
+          window.clearTimeout(window[val]);
+        }
+    });
+}
+function clearAllIntervals(arr){
+    arr.forEach(function(val){
+        if(window[val]){
+          window.clearInterval(window[val]);
+        }
+    });
 }
 /*
 groups.js serve contains functions to create group instance
@@ -619,14 +663,14 @@ Gun.prototype.fire = function(){
      var posX;
      var posY;
      if(previousBullet){
-          posX = previousBullet.body.position.x - 30;
+          posX = previousBullet.body.position.x - 30 * app.objectScale.x;
       } else {
-          posX = player.body.position.x + 50;
+          posX = player.body.position.x + 50 * app.objectScale.x;
       }
       var firedBullet = app.bullets.create(posX, player.body.position.y, this.playerbullets, this.bulletType);
       game.physics.enable(firedBullet, Phaser.Physics.ARCADE);
       if(this.scaleX){
-        firedBullet.scale.setTo(this.scaleX, this.scaleY);
+        firedBullet.scale.setTo(this.scaleX * app.objectScale.x, this.scaleY * app.objectScale.y);
       }
       firedBullet.body.velocity.x = 200;
       firedBullet.outOfBoundsKill = true;
@@ -646,8 +690,10 @@ game.state.add('cityShowDown',{
     game.load.image('missile', config.missile.image);
     game.load.atlasJSONHash('machinegun1', config.machineGun1.img, config.machineGun1.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     game.load.atlasJSONHash('bullets', config.bullets.img, config.bullets.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    game.load.image('star', config.star.img)
   },
   create: function(){
+    app.world = config["cityShowdown"];
     createBasic(app);
     app.newGun = new Gun("bullets", "bulletsmall", 3, .6, .6, null);
     app.bullets = game.add.group();
@@ -684,8 +730,9 @@ game.state.add('cityShowDown',{
         self.killerPlane.body.velocity.y = 30;
       }
       self.moveTime = Utility.randomGenerator(3500, 5500);
-      setTimeout(function(){
+      planeMoveTimeout = setTimeout(function(){
           self.killerPlane.body.velocity.y = 0;
+          console.log("plane move");
         }, self.moveTime);
     }, 8000);
      missleInterval = setInterval(function(){
@@ -713,16 +760,12 @@ game.state.add('cityShowDown',{
         missileNumber++;
       }
     }, 3000);
-    machineGun1Interval = setInterval(function(){
-      var posX = app.screenWidth - Utility.randomGenerator(80, 120);
-      self.machineGun1 = new Sprite('machinegun1', config.machineGun1.spriteName, posX, app.screenHeight + 30, config.machineGun1.scaleX * app.objectScale.x, config.machineGun1.scaleY * app.objectScale.y, 300);        
-      self.machineGun1 = self.machineGun1.createSprite();
-      game.physics.arcade.enable(self.machineGun1, Phaser.Physics.ARCADE);
-      self.machineGun1.body.gravity.y = -150;
-      setTimeout(function(){
-          self.machineGun1.body.gravity.y = 150;
-      }, Utility.randomGenerator(1000, 1500));
-    }, 5000);
+    machineGun1Interval = setInterval($.proxy(function(){
+      self.fightObject("machineGun1","machinegun1", config.machineGun1, "machineGun1Timeout");
+    },self), 8000);
+    starInterval = setInterval($.proxy(function(){
+      self.fightObject("star", "star", config.star, "starTimeout");   
+    }, self), 10000);
   },
   update: function(){
     app.score += 1;
@@ -737,22 +780,26 @@ game.state.add('cityShowDown',{
     }
   },
   killPlayer: function(player){
-    clearInterval(killerPlaneMoveInterval);
-    clearInterval(missleInterval);
-    clearInterval(machineGun1Interval);
     killPlayer(player);
   },
   killBoth: function(player, enemy){
-    clearInterval(killerPlaneMoveInterval);
-    clearInterval(missleInterval);
-    clearInterval(machineGun1Interval);
     enemy.kill();
     killPlayer(player);
   },
-  collectMachineGun: function(player, machineGun, element){
+  collectMachineGun: function(player, machineGun){
     machineGun.kill();
     window.bulletsCount += 12;
     app.currentGunElement.show().text(bulletsCount);
+  },
+  fightObject: function(obj, name, sprite, timeoutObj){
+      var posX = app.screenWidth - Utility.randomGenerator(80, 120);
+      this[obj] = new Sprite(name, sprite.spriteName, posX, app.screenHeight + 30, sprite.scaleX * app.objectScale.x,sprite.scaleY * app.objectScale.y, 300);        
+      this[obj] = this[obj].createSprite();
+      game.physics.arcade.enable(obj, Phaser.Physics.ARCADE);
+      this[obj].body.gravity.y = -150;
+      window[timeoutObj] = setTimeout($.proxy(function(){
+         this[obj].body.gravity.y = 150;
+      }, this), Utility.randomGenerator(1000, 1500));
   }
 });
 }
