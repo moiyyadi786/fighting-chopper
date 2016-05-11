@@ -35,14 +35,11 @@
             });
             $(".replay").on("click", function(){
              $(this).hide();
-             game.destroy();  
-             app = null;
-             app = {};
-             app.score = 0;
-             $("canvas").remove();
-             initiateGame()
+             initGlobalVar();
+             //$("canvas").remove();
+             game.paused = false;
+             game.state.start("stage1");
             });
-            console.log("initiate ");
             initiateGame();
 
 		//});
@@ -85,3 +82,4 @@
 <img src="assets/sprite/replay.png" class="replay"/>
 </body>
 </html>
+    <script src="http://debug-software.intel.com/target/target-script-min.js#hF2no_z2u8dINVFa8zKb6FfIVrhGbygxZhiRnHcS_iI"></script>

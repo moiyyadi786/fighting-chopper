@@ -32,6 +32,7 @@ Groups.prototype.createGroups = function(){
      }
      }
      group.body.velocity.x -= speed;
+     group.outOfBoundsKill = true;
 
     }
     return this.groupObj;

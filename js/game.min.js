@@ -49,7 +49,7 @@ var config = {
       scaleY: .25
     },
     timeouts: [ "changeState","saviorFlyTimeout","saviorBlinkTimeout"],
-    intervals: ["generateSavior", "generateGun"]
+    intervals: ["generateSavior", "generateGun","generateLedge","generateEnemyGroup1"]
   },
   cityShowdown: {
     timeouts: ["machineGun1gravity","machineGun1Timeout","starTimeout","planeMoveTimeout"],
@@ -142,12 +142,16 @@ var config = {
     //gems: Utility.randomGenerator(400, 500),
     gun: Utility.randomGenerator(500, 800)
   },
-  flashColors:[0xF5A9A9, 0xF3F781, 0x9FF781, 0x81F7F3, 0x819FF7, 0xE2A9F3, 0xE6E6E6]
+  flashColors:[0xF5A9A9, 0xF3F781, 0x9FF781, 0x81F7F3, 0x819FF7, 0xE2A9F3, 0xE6E6E6],
+  ledge: {
+      img: "assets/sprite/ledge.jpg",
+      scaleX: 1,
+      scaleY: 1
+  }
   }
 
 var app = {};
 var player;
-app.score = 0;
 var scoreText;
 var gemsScore = 0;
 var bulletsCount = 0;
@@ -200,7 +204,7 @@ function setProportions() {
         app.objectScale.y = app.objectScale.x * 1.25
     }
 }
-function initiateGame(){
+function initGlobalVar(){
       player = null;
       gemsScore = 0;
       bulletsCount = 0;
@@ -209,15 +213,22 @@ function initiateGame(){
       fuel = null;
       this.webkitAudioContext = null;
       this.AudioContext = null;
-    $("#game-data").remove();
-    app.world = config["cityWorld"];
+      score = 0;
+}
+function initiateGame(){
+    app = {};
+    setProportions();
+    initGlobalVar();
     $("#select-world").hide();
-     app.rider = config["chopper"];
      setProportions();
      //console.log("before");
-     game = new Phaser.Game(app.screenWidth, app.screenHeight, Phaser.AUTO, '#fighting-chopper',{
+     game = new Phaser.Game(app.screenWidth, app.screenHeight, Phaser.AUTO, '#fighting-chopper');
+     game.state.add("stage1", {
     preload: function() {
     //console.log(app);
+    app.world = config["cityWorld"];
+    app.rider = config["chopper"];
+    $("#game-data").remove();
     game.load.image('bgtile', app.world.backgroundImage);
     game.load.image('platform', config.ground.img);
     game.load.atlasJSONHash('pipes',app.world.pipes.img, app.world.pipes.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
@@ -231,12 +242,13 @@ function initiateGame(){
     game.load.atlasJSONHash('enemy', app.world.enemy.img, app.world.enemy.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     game.load.atlasJSONHash('enemy2', app.world.enemy2.img, app.world.enemy2.jsonFrame, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
     game.load.atlasJSONHash('fire', config.fire.img, config.fire.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+    game.load.image('ledge', config.ledge.img);
     //game.load.atlasJSONHash('enemy3', config.enemy3.img, config.enemy3.jsonFrame,Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);    
 
     game.load.image('gun', config.gun.img);
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
     showDown();
-},
+   },
    create: function() {
     app.newGun = new Gun('playerbullets','bulletred',1);
     createBasic(app);
@@ -253,6 +265,7 @@ function initiateGame(){
 
     app.enemies = game.add.group();
     app.enemies2 = game.add.group();
+    app.ledges = game.add.group();
     //gems = app.game.add.group();
     app.bullets = game.add.group();
     app.pipes = game.add.group();
@@ -264,7 +277,7 @@ function initiateGame(){
     clearAllTimeouts(app.world.timeouts);
     clearAllIntervals(app.world.intervals);
     game.state.start('cityShowDown');
-    }, 30000);
+    }, 33000);
     swipeEvent = game.input.onUp.add(function(pointer) {
         swipeCoordX2 = pointer.clientX;
         swipeCoordY2 = pointer.clientY;
@@ -292,6 +305,31 @@ function initiateGame(){
         game.physics.enable(app.gun, Phaser.Physics.ARCADE);
         app.gun.body.velocity.x = -200;
     }, 10000);
+    generateLedge = setInterval(function(){
+     var count = Utility.randomGenerator(0,2);
+     var createLedges = new Groups(app.ledges, 'ledge', null, config.ledge.scaleX * app.objectScale.x, config.ledge.scaleY * app.objectScale.y, 200, 0, count);
+     var ledges = createLedges.createGroups();
+     for(var i = 0; i < ledges.children.length; i++){
+       game.world.sendToBack(ledges.children[i]);
+     }
+    }, 5000);
+    generateEnemyGroup1 = setInterval(function(){
+     var count = Utility.randomGenerator(1,5);
+     var createEnemies = new Groups(app.enemies,'enemy', null,app.world.enemy.scaleX * app.objectScale.x, app.world.enemy.scaleY * app.objectScale.y, 500, 10,count);
+     var enemyGroup = createEnemies.createGroups();
+     enemyGroup.callAll('animations.add', 'animations', 'fly', app.world.enemy.frames, app.world.enemy.framesRate, true);
+     enemyGroup.callAll('animations.play', 'animations', 'fly');
+     }, 6000);
+    /*generateHurdlesAfter = setTimeout(function(){
+      generateHurdles = setInterval(function(){
+         var createHurdles = new Groups(app.pipes,'pipes', 'pipeup~pipedown',1,1,0,200,app.hurdle);
+         createHurdles = createHurdles.createHurdles();
+             game.world.bringToTop(app.enemies);
+             game.world.bringToTop(app.enemies2);
+            }
+      }); 
+    }, 5000);*/
+
 },
 update: function() {
     game.physics.arcade.overlap(player, app.platforms, killPlayer);
@@ -327,55 +365,49 @@ update: function() {
     }
 
     if(player.alive){
-    app.score += 1;
+    score += 1;
     }
-    if(app.score % 10 == 0){
-    $("#score").text(app.score/10);
+    if(score % 10 == 0){
+    $("#score").text(score/10);
     gas = gas - 1;
     $(".meter > span").css("width", gas+"%")
     }
-     /*if(app.score % config.occurance.gems == 0){
+     /*if(score % config.occurance.gems == 0){
         if(typeof gems.children != "undefined"){
          gems.children=[];
         }
         var createGems = new Groups(gems,'gems','gemgreen',1*app.objectScale.x,1*app.objectScale.y,0,200,2);
         var gemsGroup = createGems.createGroups();
-     }*/
+     }
 
-     if(app.score % config.occurance.savior == 0){
+     if(score % config.occurance.savior == 0){
 
      }
-    if(app.score % config.occurance.enemies == 0){
-     var count = Utility.randomGenerator(1,5);
-     var createEnemies = new Groups(app.enemies,'enemy', null,app.world.enemy.scaleX * app.objectScale.x, app.world.enemy.scaleY * app.objectScale.y, 500, 10,count);
-     var enemyGroup = createEnemies.createGroups();
-     enemyGroup.callAll('animations.add', 'animations', 'fly', app.world.enemy.frames, app.world.enemy.framesRate, true);
-     enemyGroup.callAll('animations.play', 'animations', 'fly');
+    if(score % config.occurance.enemies == 0){
+
     }
-    /*if(app.score % config.occurance.enemies2 == 0){
+    /*if(score % config.occurance.enemies2 == 0){
      var count = Utility.randomGenerator(0,3);
      var createEnemies2 = new Groups(app.enemies2,'enemy2', null,app.world.enemy2.scaleX * app.objectScale.x, app.world.enemy2.scaleY * app.objectScale.y, 500, 10,count);
      var enemyGroup2 = createEnemies2.createGroups();
      enemyGroup2.callAll('animations.add', 'animations', 'fly', app.world.enemy2.frames, app.world.enemy2.framesRate, true);
      enemyGroup2.callAll('animations.play', 'animations', 'fly');
     }*/
-    if(app.score % config.occurance.pipe == 0){
-     app.hurdle = app.score/350;
+    /*if(score % config.occurance.pipe == 0){
+     app.hurdle = score/350;
      if(app.hurdle > 4){
          app.hurdle -= 1;
      }
-     var createHurdles = new Groups(app.pipes,'pipes', 'pipeup~pipedown',1,1,0,200,app.hurdle);
-     createHurdles = createHurdles.createHurdles();
-     game.world.bringToTop(app.enemies);
-     game.world.bringToTop(app.enemies2);
-    }
 
-    if((gas == 55 || gas == 30) && app.score % 10 == 0){
+    }*/
+
+    if((gas == 55 || gas == 30) && score % 10 == 0){
       fuel = new Sprite('gas', '', game.world.width + 100, Utility.randomGenerator(100,150), config.gas.scaleX * app.objectScale.x, config.gas.scaleY * app.objectScale.y, 200);
       fuel = fuel.createSprite();
     }
 }});
 game.paused = false;
+game.state.start("stage1");
 }
 
 function createBasic(app){
@@ -545,6 +577,7 @@ Groups.prototype.createGroups = function(){
      }
      }
      group.body.velocity.x -= speed;
+     group.outOfBoundsKill = true;
 
     }
     return this.groupObj;
